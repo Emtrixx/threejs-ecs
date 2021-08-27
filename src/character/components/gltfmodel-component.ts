@@ -1,13 +1,9 @@
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import Entity from "../../utils/ecs/Entity";
+import { ObjectEntity } from "../../entities/ObjectEntity";
 import IComponent from "../../utils/ecs/IComponent";
 
 export class gltfmodel implements IComponent {
-  Entity: Entity;
-
-  constructor() {
-    this.awake()
-  }
+  Entity: ObjectEntity;
 
   awake(): void {
     this.loader()
@@ -22,7 +18,7 @@ export class gltfmodel implements IComponent {
       gltf.scene.traverse((c) => {
         c.castShadow = true;
       });
-      gltf.scene.position.set(Math.random() * 20, 0, Math.random() * 20);
+      console.log(gltf);
       this.Entity._target = gltf;
       this.Entity._params.scene.add(this.Entity._target.scene);
     });

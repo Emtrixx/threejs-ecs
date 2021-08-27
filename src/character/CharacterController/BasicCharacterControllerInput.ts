@@ -4,7 +4,7 @@ import { Movement } from "../components/movement-component";
 
 export default class BasicCharacterControllerInput implements IComponent {
   Entity: Entity;
-  _keys: {
+  private _keys: {
     forward: boolean;
     backward: boolean;
     left: boolean;
@@ -13,9 +13,6 @@ export default class BasicCharacterControllerInput implements IComponent {
     shift: boolean;
   };
   private _movement: Movement;
-
-  constructor() {
-  }
 
   update(deltaTime: number): void {
     for(const key in this._keys) {

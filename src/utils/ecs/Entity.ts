@@ -2,17 +2,17 @@ import IComponent from "./IComponent";
 import { IUpdate, IAwake } from "../lifecycle/Ilifecylce";
 
 export default abstract class Entity implements IAwake, IUpdate {
-  protected _name: String;
-  protected _id: String;
+  // protected _name: String;
+  // protected _id: String;
   protected _components: Array<IComponent> = [];
 
   public get components(): Array<IComponent> {
     return this._components;
   }
 
-  create(name: String) {
-    this._name = name;
-  }
+  // create(name: String) {
+  //   this._name = name;
+  // }
 
   public addComponent(component: IComponent): void {
     this._components.push(component);

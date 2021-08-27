@@ -3,9 +3,9 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import BasicCharacterController from "../../character/CharacterController/BasicCharacterController";
 import * as dat from "dat.gui";
 import Stats from "three/examples/jsm/libs/stats.module";
-
+import { LoadingBar } from "../../utils/LoadingBar";
 import Entity from "../../utils/ecs/Entity";
-import { Zombie } from "../../character/Zombie";
+import { Zombie } from "../../character/Zombie/Zombie";
 
 export default class World extends Entity {
   public entities: Entity[] = [];
@@ -15,6 +15,7 @@ export default class World extends Entity {
     _controls: BasicCharacterController;
     _stats: Stats;
   private _zombie: Zombie;
+  _loadingBar: LoadingBar;
   
     // public get()
   
@@ -114,18 +115,27 @@ export default class World extends Entity {
       this._scene.add(plane);
   
       // this._LoadModel()
-      this._LoadAnimatedModel();
-      this._LoadZombie()
+      this._loadingBar = new LoadingBar()
+      this._loadingBar.visible = false;
+      this.load();
+     
 
       for (const entity of this.entities){
         entity.awake()
       }
+    }
+
+    load() {
+      this._loadingBar.visible = true
+       this._LoadAnimatedModel();
+       this._LoadZombie()
     }
   
     _LoadAnimatedModel() {
       const params = {
         camera: this._camera,
         scene: this._scene,
+        loadingBar: this._loadingBar
       };
       this._controls = new BasicCharacterController(params);
       this.entities.push(this._controls)
@@ -135,6 +145,7 @@ export default class World extends Entity {
       const params = {
         camera: this._camera,
         scene: this._scene,
+        loadingBar: this._loadingBar,
         player: this._controls
       };
       this._zombie = new Zombie(params);

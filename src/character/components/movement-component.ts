@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { Position } from "../../components/position";
+import { Transform } from "../../components/transform";
 import { ObjectEntity } from "../../entities/ObjectEntity";
 import IComponent from "../../utils/ecs/IComponent";
 
 export class Movement implements IComponent {
     Entity: ObjectEntity;
-    private _position: Position;
+    private _transform: Transform;
     private _decceleration: THREE.Vector3;
     private _acceleration: THREE.Vector3;
     private _velocity: THREE.Vector3;
@@ -23,10 +23,10 @@ export class Movement implements IComponent {
     }
 
     awake(): void {
-        this._position = this.Entity.getComponent(Position)
     }
-
+    
     update(deltaTime: number): void {
+      this._transform = this.Entity.getComponent(Transform)
         const velocity = this._velocity;
         const frameDecceleration = new THREE.Vector3(
             velocity.x * this._decceleration.x,
@@ -89,8 +89,8 @@ export class Movement implements IComponent {
         sideways.multiplyScalar(velocity.x * deltaTime);
         forward.multiplyScalar(velocity.z * deltaTime);
 
-        this._position.add(forward.x, forward.y, forward.z);
-        this._position.add(sideways.x, sideways.y, sideways.z);
+        this._transform.position.add(forward);
+        this._transform.position.add(sideways);
 
         oldPosition.copy(controlObject.scene.position);
     }

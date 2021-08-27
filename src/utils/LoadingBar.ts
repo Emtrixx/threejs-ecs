@@ -2,7 +2,7 @@ class LoadingBar{
     domElement: HTMLDivElement;
     progressBar: HTMLDivElement;
     assets: Object | undefined;
-	constructor(options){
+	constructor(){
 		this.domElement = document.createElement("div");
 		this.domElement.style.position = 'fixed';
 		this.domElement.style.top = '0';

@@ -2,7 +2,7 @@ import * as THREE from "three";
 import BasicCharacterControllerInput from "./BasicCharacterControllerInput";
 import FiniteStateMachine from "../CharacterAnimation/FiniteStateMachine";
 import { objmodel } from "../components/objmodel-component";
-import { Position } from "../../components/position";
+import { Transform } from "../../components/transform";
 import { Movement } from "../components/movement-component";
 import { ObjectEntity } from "../../entities/ObjectEntity";
 
@@ -21,7 +21,7 @@ export default class BasicCharacterController extends ObjectEntity {
       const acceleration = new THREE.Vector3(1, 0.25, 50.0);
       const velocity = new THREE.Vector3(0, 0, 0);
 
-      this.addComponent(new Position(0,0,0))
+      this.addComponent(new Transform())
       this.addComponent(new objmodel())
       this.addComponent(new BasicCharacterControllerInput());
       this.addComponent(new Movement(decceleration, acceleration, velocity))
@@ -34,7 +34,6 @@ export default class BasicCharacterController extends ObjectEntity {
     update(deltaTime) {
       // this._stateMachine.Update(deltaTime, this._input);
       if (!this._target) {
-        console.log('Test')
         return;
       }
       super.update(deltaTime)
