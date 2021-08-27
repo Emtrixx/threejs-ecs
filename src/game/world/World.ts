@@ -5,13 +5,16 @@ import * as dat from "dat.gui";
 import Stats from "three/examples/jsm/libs/stats.module";
 
 import Entity from "../../utils/ecs/Entity";
+import { Zombie } from "../../character/Zombie";
 
 export default class World extends Entity {
+  public entities: Entity[] = [];
     _threejs: THREE.WebGLRenderer;
     _camera: THREE.PerspectiveCamera;
     _scene: THREE.Scene;
     _controls: BasicCharacterController;
     _stats: Stats;
+  private _zombie: Zombie;
   
     // public get()
   
@@ -112,8 +115,11 @@ export default class World extends Entity {
   
       // this._LoadModel()
       this._LoadAnimatedModel();
-      // this._LoadZombie()
-    //   this._RAF();
+      this._LoadZombie()
+
+      for (const entity of this.entities){
+        entity.awake()
+      }
     }
   
     _LoadAnimatedModel() {
@@ -122,28 +128,19 @@ export default class World extends Entity {
         scene: this._scene,
       };
       this._controls = new BasicCharacterController(params);
+      this.entities.push(this._controls)
     }
   
-    // _LoadZombie() {
-    //   const params = {
-    //     camera: this._camera,
-    //     scene: this._scene,
-    //     player: this._controls
-    //   };
-    //   this._zombie = new Zombie(params);
-    // }
-  
-    _Step(timeElapsed) {
-      const time = timeElapsed;
-  
-      if (this._controls) {
-        this._controls.update(time);
-      }
-  
-      // if(this._zombie) {
-      //   this._zombie.Update(time)
-      // }
+    _LoadZombie() {
+      const params = {
+        camera: this._camera,
+        scene: this._scene,
+        player: this._controls
+      };
+      this._zombie = new Zombie(params);
+      this.entities.push(this._zombie)
     }
+  
   
     _OnWindowResize() {
       // Update sizes
@@ -153,9 +150,11 @@ export default class World extends Entity {
     }
   
     update(deltaTime) {
+      for (const entity of this.entities){
+        entity.update(deltaTime)
+      }
         this._stats.update();
         this._threejs.render(this._scene, this._camera);
-        this._Step(deltaTime);
     }
   
     // _LoadModel() {

@@ -9,11 +9,11 @@ export class Zombie extends Entity {
   constructor(params) {
     super();
     this._params = params;
-    console.log(params.player);
+    console.log(params);
   }
 
   awake() {
-    this.addComponent(new gltfmodel(this._target, this._params))
+    this.addComponent(new gltfmodel())
   }
 
   update(deltaTime) {
@@ -22,7 +22,7 @@ export class Zombie extends Entity {
     }
 
     const controlObject = this._target;
-    controlObject.scene.lookAt(this._params.player._target.position);
+    controlObject.scene.lookAt(this._params.player._target.scene.position);
 
     const forward = new THREE.Vector3(0, 0, 1);
     forward.applyQuaternion(controlObject.scene.quaternion);

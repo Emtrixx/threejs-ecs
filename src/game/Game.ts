@@ -13,10 +13,11 @@ export class Game extends Entity {
 
         for (const entity of this.entities){
             entity.awake()
-          }
+        }
 
         window.requestAnimationFrame(() => {
             this._lastTimestamp = Date.now()
+            
             this.update()
         })
     }
@@ -26,6 +27,7 @@ export class Game extends Entity {
 
         //Update components
         super.update(deltaTime)
+        // console.log(super.components)
 
         //update children
         for (const entity of this.entities){
