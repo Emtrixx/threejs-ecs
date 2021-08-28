@@ -27,7 +27,6 @@ export class Game extends Entity {
 
         //Update components
         super.update(deltaTime)
-        // console.log(super.components)
 
         //update children
         for (const entity of this.entities){

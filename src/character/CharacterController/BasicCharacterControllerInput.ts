@@ -4,40 +4,19 @@ import { Movement } from "../components/movement-component";
 
 export default class BasicCharacterControllerInput implements IComponent {
   Entity: Entity;
-  private _keys: {
-    forward: boolean;
-    backward: boolean;
-    left: boolean;
-    right: boolean;
-    space: boolean;
-    shift: boolean;
-  };
   private _movement: Movement;
 
-  update(deltaTime: number): void {
-    for(const key in this._keys) {
-      if(this._keys[key]) {
-        console.log(key);
-      }
-    }
+  update(_): void {
+    //TODO
   }
 
   awake() {
-    this._keys = {
-      forward: false,
-      backward: false,
-      left: false,
-      right: false,
-      space: false,
-      shift: false,
-    };
-
     this._movement = this.Entity.getComponent(Movement)
-
-    document.addEventListener("keydown", (e) => this._onKeyDown(e), false);
-    document.addEventListener("keyup", (e) => this._onKeyUp(e), false);
+    document.addEventListener("keydown", (e) => this.onKeyDown(e), false);
+    document.addEventListener("keyup", (e) => this.onKeyUp(e), false);
   }
-  _onKeyDown(e: KeyboardEvent): any {
+
+  onKeyDown(e: KeyboardEvent): any {
     switch (e.code) {
       case "KeyW":
         this._movement._forward = true;
@@ -59,7 +38,7 @@ export default class BasicCharacterControllerInput implements IComponent {
         break;
     }
   }
-  _onKeyUp(e: KeyboardEvent): any {
+  onKeyUp(e: KeyboardEvent): any {
     switch (e.code) {
       case "KeyW":
         this._movement._forward = false;

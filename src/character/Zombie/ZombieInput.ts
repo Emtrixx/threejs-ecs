@@ -14,21 +14,20 @@ export class ZombieInput implements IComponent {
 
     awake(): void {
         this._following = true
-    }
-    
-    update(deltaTime: number): void {
-        if(!this.Entity._target) {
-            return
-        }
         this._transform = this.Entity.getComponent(Transform)
         this._movement = this.Entity.getComponent(Movement)
         this._playerTransform = this.Entity._params.player.getComponent(Transform)
-        
-        //Should be under transform
+    }
+    
+    update(_): void {
+        if(!this.Entity._target) {
+            return
+        }
+        //Should be under transform but threejs lookAt function does the job
         const controlObject = this.Entity._target.scene;
         controlObject.lookAt(this._playerTransform.position);
 
-        if(this._transform.position.distanceTo(this._playerTransform.position)< 10) {
+        if(this._transform.position.distanceTo(this._playerTransform.position)< 30) {
             this._movement._forward = true;
         } else {
             this._movement._forward = false;

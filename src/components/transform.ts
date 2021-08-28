@@ -20,29 +20,9 @@ export class Transform implements IComponent {
             return
         }
         this.Entity._target.scene.position.set(this.position.x, this.position.y, this.position.z)
-        // this.Entity._target.scene.position.set(0,0,0)
     }
     
-    
-    update(deltaTime: number): void {
+    update(_): void {
         this.Entity._target.scene.position.set(this.position.x, this.position.y, this.position.z)
     }
-    
-
-
-    // get(): Array<number> {
-    //     return [this._x, this._y, this._z]
-    // }
-    // set(x:number, y:number, z:number): void {
-    //     this._x = x;
-    //     this._y = y;
-    //     this._z = z;
-    // }
-
-    // add(x:number, y:number, z:number): void {
-    //     this._x += x;
-    //     this._y += y;
-    //     this._z += z;
-    // }
-    
 }

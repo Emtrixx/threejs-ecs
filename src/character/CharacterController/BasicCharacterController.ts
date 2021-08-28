@@ -1,10 +1,10 @@
 import * as THREE from "three";
 import BasicCharacterControllerInput from "./BasicCharacterControllerInput";
 import FiniteStateMachine from "../CharacterAnimation/FiniteStateMachine";
-import { objmodel } from "../components/objmodel-component";
 import { Transform } from "../../components/transform";
 import { Movement } from "../components/movement-component";
 import { ObjectEntity } from "../../entities/ObjectEntity";
+import { Loader } from "../components/loader";
 
 
 export default class BasicCharacterController extends ObjectEntity {
@@ -22,7 +22,7 @@ export default class BasicCharacterController extends ObjectEntity {
       const velocity = new THREE.Vector3(0, 0, 0);
 
       this.addComponent(new Transform())
-      this.addComponent(new objmodel())
+      this.addComponent(new Loader("./models/soccerPlayer.obj"))
       this.addComponent(new BasicCharacterControllerInput());
       this.addComponent(new Movement(decceleration, acceleration, velocity))
     }
@@ -32,14 +32,15 @@ export default class BasicCharacterController extends ObjectEntity {
     }
   
     update(deltaTime) {
-      // this._stateMachine.Update(deltaTime, this._input);
       if (!this._target) {
         return;
       }
       super.update(deltaTime)
+    }
 
-      // if (this._mixer) {
-      //   this._mixer.update(deltaTime);
-      // }
+    onLoad() {
+      const p = this.getComponent(Transform).position;
+      this._target.scene.position.set(p[0], p[2], p[3]);
+      this._params.scene.add(this._target.scene);
     }
   }

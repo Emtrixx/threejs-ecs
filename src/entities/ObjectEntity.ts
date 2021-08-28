@@ -10,4 +10,6 @@ export abstract class ObjectEntity extends Entity {
         super()
     }
 
+    onLoad() {}
+
 }
