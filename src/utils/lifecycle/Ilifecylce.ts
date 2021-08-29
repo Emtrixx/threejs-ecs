@@ -5,3 +5,7 @@ export interface IAwake {
 export interface IUpdate {
     update(deltaTime: number): void
 }
+
+export interface IonLoad {
+    onLoad(): void
+}

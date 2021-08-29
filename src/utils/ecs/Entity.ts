@@ -1,7 +1,7 @@
 import IComponent from "./IComponent";
-import { IUpdate, IAwake } from "../lifecycle/Ilifecylce";
+import { IUpdate, IAwake, IonLoad } from "../lifecycle/Ilifecylce";
 
-export default abstract class Entity implements IAwake, IUpdate {
+export default abstract class Entity implements IAwake, IUpdate, IonLoad {
   // protected _name: String;
   // protected _id: String;
   protected _components: Array<IComponent> = [];
@@ -67,9 +67,12 @@ export default abstract class Entity implements IAwake, IUpdate {
     }
   }
 
+  onLoad(): void {}
+
   public update(deltaTime: number): void {
     for(const component of this._components) {
       component.update(deltaTime)
     }
   }
+
 }

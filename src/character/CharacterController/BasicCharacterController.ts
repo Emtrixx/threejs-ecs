@@ -1,30 +1,28 @@
 import * as THREE from "three";
 import BasicCharacterControllerInput from "./BasicCharacterControllerInput";
-import FiniteStateMachine from "../CharacterAnimation/FiniteStateMachine";
+import FiniteStateMachine, { BasicCharacterControllerProxy, CharacterFSM } from "../CharacterAnimation/FiniteStateMachine";
 import { Transform } from "../../components/transform";
 import { Movement } from "../components/movement-component";
 import { ObjectEntity } from "../../entities/ObjectEntity";
 import { Loader } from "../components/loader";
+import { Vector3 } from "three";
 
 
 export default class BasicCharacterController extends ObjectEntity {
-
-    _input: BasicCharacterControllerInput;
-    _stateMachine: FiniteStateMachine;
-  
     constructor(params) {
       super()
       this._params = params;
-      this._stateMachine = new FiniteStateMachine();
   
       const decceleration = new THREE.Vector3(-0.0005, -0.0001, -5.0);
       const acceleration = new THREE.Vector3(1, 0.25, 50.0);
       const velocity = new THREE.Vector3(0, 0, 0);
 
       this.addComponent(new Transform())
-      this.addComponent(new Loader("./models/soccerPlayer.obj"))
+      const p = './models/character/'
+      this.addComponent(new Loader(p+'player.glb', [p+'idle.glb', p+'walk.glb', p+'run.glb', p+'attack.glb', p+'death.glb']))
       this.addComponent(new BasicCharacterControllerInput());
       this.addComponent(new Movement(decceleration, acceleration, velocity))
+      // this.addComponent(new CharacterFSM(new BasicCharacterControllerProxy(this._animations)))
     }
   
     awake() {
@@ -39,8 +37,8 @@ export default class BasicCharacterController extends ObjectEntity {
     }
 
     onLoad() {
-      const p = this.getComponent(Transform).position;
-      this._target.scene.position.set(p[0], p[2], p[3]);
+      this._target.scene.scale.set(5,5,5)
       this._params.scene.add(this._target.scene);
+      // this.getComponent(CharacterFSM).SetState('idle')
     }
   }

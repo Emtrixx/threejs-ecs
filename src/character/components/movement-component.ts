@@ -52,7 +52,7 @@ export class Movement implements IComponent {
           acc.multiplyScalar(2.0);
         }
 
-        // if (this._stateMachine._currentState.Name == 'dance') {
+        // if (this._stateMachine._currentState.name == 'dance') {
         //   acc.multiplyScalar(0.0);
         // }
 

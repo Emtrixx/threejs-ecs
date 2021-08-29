@@ -16,6 +16,7 @@ export default class World extends Entity {
   private _stats: Stats;
   private _zombie: Zombie;
   private _loadingBar: LoadingBar;
+  _manager: THREE.LoadingManager;
 
   awake() {
     //Renderer
@@ -115,6 +116,8 @@ export default class World extends Entity {
     //Loading Models
     this._loadingBar = new LoadingBar()
     this._loadingBar.visible = false;
+    this._manager = new THREE.LoadingManager()
+    this._manager.onLoad = () => this.onLoad()
     this.load();
 
     for (const entity of this.entities) {
@@ -136,11 +139,20 @@ export default class World extends Entity {
     this._LoadZombie()
   }
 
+  onLoad() {
+    console.log('done');
+    this._loadingBar.visible = false;
+    for (const entity of this.entities) {
+      entity.onLoad()
+    }
+  }
+
   _LoadAnimatedModel() {
     const params = {
       camera: this._camera,
       scene: this._scene,
-      loadingBar: this._loadingBar
+      loadingBar: this._loadingBar,
+      manager: this._manager
     };
     this._controls = new BasicCharacterController(params);
     this.entities.push(this._controls)
@@ -151,7 +163,8 @@ export default class World extends Entity {
       camera: this._camera,
       scene: this._scene,
       loadingBar: this._loadingBar,
-      player: this._controls
+      player: this._controls,
+      manager: this._manager
     };
     this._zombie = new Zombie(params);
     this.entities.push(this._zombie)

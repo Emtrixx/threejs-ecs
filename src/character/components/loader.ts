@@ -1,82 +1,132 @@
-import { Transform } from "../../components/transform";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
+import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader"
 import { ObjectEntity } from "../../entities/ObjectEntity";
 import IComponent from "../../utils/ecs/IComponent";
+import * as THREE from "three";
 
 export class Loader implements IComponent {
     Entity: ObjectEntity;
-    private _filepath: string;
+    private _modelFilepath: string;
+    private _animationFilepathArray: string[];
+    private _mixer: THREE.AnimationMixer;
+    private _manager: THREE.LoadingManager;
 
-    constructor(filepath: string) {
-        this._filepath = filepath
+    constructor(modelFilepth: string, animationFilepathArray: Array<string>) {
+        this._modelFilepath = modelFilepth
+        this._animationFilepathArray = animationFilepathArray
     }
 
     awake(): void {
-        this.load()
+        this._manager = this.Entity._params.manager
+        this.loadModel()
     }
 
-    update(_): void {}
+    update(_): void { }
 
-    load() {
+    loadModel() {
         let re = /\.\w+$/m
 
-        if(this._filepath.match(re)[0] == '.gltf') {
-            this.gltfLoad()
+        if (this._modelFilepath.match(re)[0] == '.gltf' || this._modelFilepath.match(re)[0] == '.glb') {
+            this.gltfLoad(this._modelFilepath)
         } else {
-            this.objLoad()
+            this.objLoad(this._modelFilepath)
         }
+
     }
 
-    gltfLoad() {
-        const loader = new GLTFLoader();
-        loader.load(this._filepath, (gltf) => {
-          gltf.scene.traverse((c) => {
-            c.castShadow = true;
-          });
-          this.Entity._target = gltf;;
-          this.Entity.onLoad()
+    gltfLoad(filepath) {
+        const loader = new GLTFLoader(this._manager);
+        loader.load(filepath, (gltf) => {
+            gltf.scene.traverse((c) => {
+                c.castShadow = true;
+            });
+            this.Entity._target = gltf;
+            this.loadAnimations()
         },
-        // called while loading is progressing
-        xhr => {
-  
-          this.Entity._params.loadingBar.update('character', xhr.loaded, xhr.total);
-  
-        },
-        // called when loading has errors
-        err => {
-  
-          console.error(err);
-  
-        }
-      ); 
+            // called while loading is progressing
+            xhr => {
+
+                this.Entity._params.loadingBar.update('character', xhr.loaded, xhr.total);
+
+            },
+            // called when loading has errors
+            err => {
+
+                console.error(err);
+
+            }
+        );
     }
 
-    objLoad() {
-        const loader = new OBJLoader();
+    objLoad(filepath) {
+        const loader = new OBJLoader(this._manager);
         loader.load(
-          // resource URL
-          this._filepath,
-          (object) => {
-            //fit to gltf way of having everything on scene property
-            const loadedObject = { scene: null };
-            loadedObject.scene = object;
-           
-            this.Entity._target = loadedObject;
-            this.Entity.onLoad()
-          },
-          // called while loading is progressing
-          xhr => {
-    
-            this.Entity._params.loadingBar.update('character', xhr.loaded, xhr.total);
-    
-          },
-          // called when loading has errors
-          err => {
-    
-            console.error(err);
-    
-          }
-        ); 
+            // resource URL
+            filepath,
+            (object) => {
+                //fit to gltf way of having everything on scene property
+                const loadedObject = { scene: null };
+                loadedObject.scene = object;
+                this.Entity._target = loadedObject;
+                this.loadAnimations()
+            },
+            // called while loading is progressing
+            xhr => {
+
+                this.Entity._params.loadingBar.update('character', xhr.loaded, xhr.total);
+
+            },
+            // called when loading has errors
+            err => {
+
+                console.error(err);
+
+            }
+        );
+    }
+
+    loadAnimations(): void {
+        if (this._animationFilepathArray.length > 0) {
+            this._mixer = new THREE.AnimationMixer(this.Entity._target.scene);
+            for (const animationPath of this._animationFilepathArray) {
+                let re = /\.\w+$/m
+                if (animationPath.match(re)[0] == '.gltf' || animationPath.match(re)[0] == '.glb') {
+                    this.gltfAnimationLoad(animationPath)
+                } else {
+                    this.fbxAnimationLoad(animationPath)
+                }
+            }
+        }
+    }
+
+    fbxAnimationLoad(animationPath: string): void {
+        const nameReg = /(\w+)(?:\.fbx)/m
+        const name = animationPath.match(nameReg)[1]
+        const loader = new FBXLoader(this._manager)
+        loader.load(animationPath,
+            animation => {
+                const clip = animation.animations[0];
+                const action = this._mixer.clipAction(clip);
+                this.Entity._animations[name] = {
+                    clip,
+                    action
+                }
+            })
+    }
+
+    gltfAnimationLoad(animationPath: string): void {
+        const nameReg = /(\w+)(?:\.gl)/m
+        const name = animationPath.match(nameReg)[1]
+        const loader = new GLTFLoader(this._manager)
+        loader.load(animationPath,
+            animation => {
+                const clip = animation.animations[0];
+                const action = this._mixer.clipAction(clip);
+                this.Entity._animations[name] = {
+                    clip,
+                    action
+                }
+            })
     }
 }

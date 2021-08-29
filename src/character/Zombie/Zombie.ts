@@ -17,7 +17,7 @@ export class Zombie extends ObjectEntity {
     const acceleration = new THREE.Vector3(1, 0.25, 50.0);
     const velocity = new THREE.Vector3(0, 0, 0);
     this.addComponent(new Transform(this.spawnpoint()))
-    this.addComponent(new Loader("./models/Boxhead.gltf"))
+    this.addComponent(new Loader("./models/Boxhead.gltf", []))
     this.addComponent(new Movement(decceleration, acceleration, velocity))
     this.addComponent(new ZombieInput)
     super.awake()
@@ -32,7 +32,6 @@ export class Zombie extends ObjectEntity {
 
   onLoad() {
     this._params.scene.add(this._target.scene);
-    this._params.loadingBar.visible = false;
   }
 
   spawnpoint(): Vector3 {
