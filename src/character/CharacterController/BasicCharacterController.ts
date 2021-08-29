@@ -6,6 +6,7 @@ import { Movement } from "../components/movement-component";
 import { ObjectEntity } from "../../entities/ObjectEntity";
 import { Loader } from "../components/loader";
 import { Vector3 } from "three";
+import { SpatialGridController } from "../../game/world/components/SpatialHashGridController";
 
 
 export default class BasicCharacterController extends ObjectEntity {
@@ -22,6 +23,7 @@ export default class BasicCharacterController extends ObjectEntity {
       this.addComponent(new Loader(p+'player.glb', [p+'idle.glb', p+'walk.glb', p+'run.glb', p+'attack.glb', p+'death.glb']))
       this.addComponent(new BasicCharacterControllerInput());
       this.addComponent(new Movement(decceleration, acceleration, velocity))
+      this.addComponent(new SpatialGridController({grid: this._params.grid}))
     }
     
     awake() {

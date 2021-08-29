@@ -6,6 +6,7 @@ import Stats from "three/examples/jsm/libs/stats.module";
 import { LoadingBar } from "../../utils/LoadingBar";
 import Entity from "../../utils/ecs/Entity";
 import { Zombie } from "../../character/Zombie/Zombie";
+import { SpatialHashGrid } from "../../utils/SpatialHashGrid";
 
 export default class World extends Entity {
   public entities: Entity[] = [];
@@ -17,6 +18,7 @@ export default class World extends Entity {
   private _zombie: Zombie;
   private _loadingBar: LoadingBar;
   _manager: THREE.LoadingManager;
+  private _grid: SpatialHashGrid;
 
   awake() {
     //Renderer
@@ -113,6 +115,10 @@ export default class World extends Entity {
     plane.rotation.x = -Math.PI / 2;
     this._scene.add(plane);
 
+    //Grid
+    this._grid = new SpatialHashGrid(
+      [[-1000, -1000], [1000, 1000]], [100, 100]);
+
     //Loading Models
     this._loadingBar = new LoadingBar()
     this._loadingBar.visible = false;
@@ -152,7 +158,8 @@ export default class World extends Entity {
       camera: this._camera,
       scene: this._scene,
       loadingBar: this._loadingBar,
-      manager: this._manager
+      manager: this._manager,
+      grid: this._grid
     };
     this._controls = new BasicCharacterController(params);
     this.entities.push(this._controls)
@@ -164,10 +171,14 @@ export default class World extends Entity {
       scene: this._scene,
       loadingBar: this._loadingBar,
       player: this._controls,
-      manager: this._manager
+      manager: this._manager,
+      grid: this._grid
     };
-    this._zombie = new Zombie(params);
-    this.entities.push(this._zombie)
+    for(let i = 0; i<20; i++) {
+      this._zombie = new Zombie(params);
+      this.entities.push(this._zombie)
+      
+    }
   }
 
   _OnWindowResize() {
