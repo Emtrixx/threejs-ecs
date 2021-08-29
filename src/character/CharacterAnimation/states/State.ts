@@ -2,7 +2,7 @@ import { CharacterFSM } from "../FiniteStateMachine";
 
 export abstract class State {
     protected _parent: CharacterFSM;
-    public name: string
+    public name;
     
     constructor(parent: CharacterFSM) {
       this._parent = parent;

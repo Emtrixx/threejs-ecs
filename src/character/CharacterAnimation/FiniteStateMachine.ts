@@ -13,6 +13,8 @@ export default class FiniteStateMachine implements IComponent {
   _states: object = {};
   _currentState: State | null;
   _movement: Movement;
+  //wird in loader gesetzt
+  _mixer: THREE.AnimationMixer
 
   constructor() {
     this._states = {};
@@ -26,6 +28,8 @@ export default class FiniteStateMachine implements IComponent {
   update(deltaTime: number): void {
     if (this._currentState) {
         this._currentState.update(deltaTime);
+        //mixer update
+        this._mixer.update(deltaTime)
       }
   }
 

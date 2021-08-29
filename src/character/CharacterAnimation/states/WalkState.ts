@@ -3,18 +3,13 @@ import { State } from "./State";
 export class WalkState extends State {
     constructor(parent) {
         super(parent);
-    }
-
-    get Name() {
-        return 'walk';
+        this.name = 'walk'
     }
 
     enter(prevState) {
         const curAction = this._parent._proxy._animations['walk'].action;
         if (prevState) {
-            console.log(prevState);
             const prevAction = this._parent._proxy._animations[prevState.name].action;
-
             curAction.enabled = true;
 
             if (prevState.name == 'run') {

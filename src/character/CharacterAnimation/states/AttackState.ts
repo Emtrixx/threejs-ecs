@@ -7,7 +7,7 @@ export class AttackState extends State {
     
     constructor(parent) {
       super(parent);
-  
+      this.name = 'attack'
       this._action = null;
   
       this._FinishedCallback = () => {

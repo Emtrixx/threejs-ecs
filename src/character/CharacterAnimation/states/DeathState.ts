@@ -6,12 +6,8 @@ export class DeathState extends State {
     _action: any;
     constructor(parent: CharacterFSM) {
       super(parent);
-  
+      this.name = 'death'
       this._action = null;
-    }
-  
-    get Name() {
-      return 'death';
     }
   
     enter(prevState): void {

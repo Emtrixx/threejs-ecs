@@ -4,6 +4,7 @@ import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader"
 import { ObjectEntity } from "../../entities/ObjectEntity";
 import IComponent from "../../utils/ecs/IComponent";
 import * as THREE from "three";
+import FiniteStateMachine from "../CharacterAnimation/FiniteStateMachine";
 
 export class Loader implements IComponent {
     Entity: ObjectEntity;
@@ -88,7 +89,8 @@ export class Loader implements IComponent {
 
     loadAnimations(): void {
         if (this._animationFilepathArray.length > 0) {
-            this._mixer = new THREE.AnimationMixer(this.Entity._target.scene);
+            this.Entity.getComponent(FiniteStateMachine)._mixer = new THREE.AnimationMixer(this.Entity._target.scene);
+            this._mixer = this.Entity.getComponent(FiniteStateMachine)._mixer
             for (const animationPath of this._animationFilepathArray) {
                 let re = /\.\w+$/m
                 if (animationPath.match(re)[0] == '.gltf' || animationPath.match(re)[0] == '.glb') {

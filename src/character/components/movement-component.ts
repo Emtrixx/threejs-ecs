@@ -91,6 +91,10 @@ export class Movement implements IComponent {
 
         this._transform.position.add(forward);
         this._transform.position.add(sideways);
+        
+        //without transform component
+        // this.Entity._target.scene.position.add(forward)
+        // this.Entity._target.scene.position.add(sideways)
 
         oldPosition.copy(controlObject.scene.position);
     }

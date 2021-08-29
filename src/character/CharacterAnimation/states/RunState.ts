@@ -5,6 +5,7 @@ export class RunState extends State {
 
     constructor(parent) {
         super(parent);
+        this.name = 'run'
     }
 
     enter(prevState) {
@@ -36,7 +37,7 @@ export class RunState extends State {
     update() {
         const move = this._parent._movement
         if (move._forward || move._backward) {
-            if (move._run) {
+            if (!move._run) {
                 this._parent.SetState('walk');
             }
             return;

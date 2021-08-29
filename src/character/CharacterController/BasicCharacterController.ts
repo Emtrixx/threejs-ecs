@@ -22,10 +22,10 @@ export default class BasicCharacterController extends ObjectEntity {
       this.addComponent(new Loader(p+'player.glb', [p+'idle.glb', p+'walk.glb', p+'run.glb', p+'attack.glb', p+'death.glb']))
       this.addComponent(new BasicCharacterControllerInput());
       this.addComponent(new Movement(decceleration, acceleration, velocity))
-      // this.addComponent(new CharacterFSM(new BasicCharacterControllerProxy(this._animations)))
     }
-  
+    
     awake() {
+      this.addComponent(new CharacterFSM(new BasicCharacterControllerProxy(this._animations)))
       super.awake()
     }
   
@@ -39,6 +39,6 @@ export default class BasicCharacterController extends ObjectEntity {
     onLoad() {
       this._target.scene.scale.set(5,5,5)
       this._params.scene.add(this._target.scene);
-      // this.getComponent(CharacterFSM).SetState('idle')
+      this.getComponent(CharacterFSM).SetState('idle')
     }
   }

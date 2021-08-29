@@ -3,10 +3,7 @@ import { State } from "./State";
 export class IdleState extends State {
     constructor(parent) {
         super(parent);
-    }
-
-    get Name() {
-        return 'idle';
+        this.name = 'idle'
     }
 
     enter(prevState) {
@@ -20,7 +17,6 @@ export class IdleState extends State {
             idleAction.crossFadeFrom(prevAction, 0.25, true);
             idleAction.play();
         } else {
-            // console.log(idleAction);
             idleAction.play();
         }
     }
