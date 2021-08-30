@@ -8,6 +8,7 @@ export class Collider implements IComponent {
     private _grid: SpatialGridController;
     private _radius: number;
     private _transform: Transform;
+    collision: boolean = false;
 
     constructor(radius: number) {
         this._radius = radius;
@@ -18,11 +19,13 @@ export class Collider implements IComponent {
         this._transform = this.Entity.getComponent(Transform)
     }
     update(deltaTime: number): void {
-        const near = this._grid.FindNearbyEntities(this._radius)
+        const near = this._grid.FindNearbyEntities(this._radius + 10)
         // console.log(near);
         for(const entity of near) {
-            if(this._transform.position.distanceTo(entity.entity._target.scene.position) < 5) {
-                // console.log('collision')
+            if(this._transform.position.distanceTo(entity.entity.getComponent(Transform).position) < this._radius) {
+                this.collision = true;
+            } else {
+                this.collision = false
             }
         }
     }

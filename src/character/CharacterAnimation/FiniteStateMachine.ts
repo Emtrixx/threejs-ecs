@@ -1,5 +1,6 @@
 import Entity from "../../utils/ecs/Entity";
 import IComponent from "../../utils/ecs/IComponent";
+import { AttackController } from "../components/attackController";
 import { Movement } from "../components/movement-component";
 import { AttackState } from "./states/AttackState";
 import { DeathState } from "./states/DeathState";
@@ -15,6 +16,7 @@ export default class FiniteStateMachine implements IComponent {
   _movement: Movement;
   //wird in loader gesetzt
   _mixer: THREE.AnimationMixer
+  _attack: AttackController;
 
   constructor() {
     this._states = {};
@@ -23,6 +25,7 @@ export default class FiniteStateMachine implements IComponent {
 
   awake(): void {
     this._movement = this.Entity.getComponent(Movement)
+    this._attack = this.Entity.getComponent(AttackController)
   }
 
   update(deltaTime: number): void {
@@ -66,7 +69,7 @@ export class CharacterFSM extends FiniteStateMachine {
     this._AddState('idle', IdleState);
     this._AddState('walk', WalkState);
     this._AddState('run', RunState);
-    // this._AddState('attack', AttackState);
+    this._AddState('attack', AttackState);
     // this._AddState('death', DeathState);
   }
 }

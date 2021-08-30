@@ -14,11 +14,10 @@ export class SpatialGridController implements IComponent {
     }
     
     update(deltaTime: number): void {  
-        this._transform = this.Entity.getComponent(Transform)
-        this._client.position.x = this._transform.position.x
-        this._client.position.y = this._transform.position.z
+        this._client.position[0] = this._transform.position.x
+        this._client.position[1] = this._transform.position.z
+        // console.log(this._client);
 
-        // console.log(this.Entity);
         this._grid.UpdateClient(this._client)
     }
 
@@ -40,7 +39,6 @@ export class SpatialGridController implements IComponent {
     }
 
     FindNearbyEntities(range) {
-
         const results = this._grid.FindNear(
             [this._transform.position.x, this._transform.position.z], [range, range]);
 
