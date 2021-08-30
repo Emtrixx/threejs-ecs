@@ -7,6 +7,7 @@ import { ObjectEntity } from "../../entities/ObjectEntity";
 import { Loader } from "../components/loader";
 import { Vector3 } from "three";
 import { SpatialGridController } from "../../game/world/components/SpatialHashGridController";
+import { Collider } from "../components/collider";
 
 
 export default class BasicCharacterController extends ObjectEntity {
@@ -28,6 +29,7 @@ export default class BasicCharacterController extends ObjectEntity {
     
     awake() {
       this.addComponent(new CharacterFSM(new BasicCharacterControllerProxy(this._animations)))
+      this.addComponent(new Collider(3))
       super.awake()
     }
   

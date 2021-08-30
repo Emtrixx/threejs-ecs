@@ -19,14 +19,14 @@ export class Collider implements IComponent {
         this._transform = this.Entity.getComponent(Transform)
     }
     update(deltaTime: number): void {
-        const near = this._grid.FindNearbyEntities(this._radius)
-        // console.log(near);
-        for(const entity of near) {
-            if(this._transform.position.distanceTo(entity.entity.getComponent(Transform).position) < 5) {
-                 this.collison =true;
+        // const near = this._grid.FindNearbyEntities(this._radius)
+        // // console.log(near);
+        // for(const entity of near) {
+        //     if(this._transform.position.distanceTo(entity.entity.getComponent(Transform).position) < 5) {
+        //          this.collison =true;}}
             }
-        }
-    }
+        
+    
     lookForFutureCollison(futurPositon: THREE.Vector3){
         const near = this._grid.FindNearbyEntities(this._radius)
         // console.log(near);
