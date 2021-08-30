@@ -174,7 +174,7 @@ export default class World extends Entity {
       manager: this._manager,
       grid: this._grid
     };
-    for(let i = 0; i<20; i++) {
+    for(let i = 0; i<1; i++) {
       this._zombie = new Zombie(params);
       this.entities.push(this._zombie)
       

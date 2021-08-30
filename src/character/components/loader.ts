@@ -13,7 +13,7 @@ export class Loader implements IComponent {
     private _mixer: THREE.AnimationMixer;
     private _manager: THREE.LoadingManager;
 
-    constructor(modelFilepth: string, animationFilepathArray: Array<string>) {
+    constructor(modelFilepth: string, animationFilepathArray: Array<string> = []) {
         this._modelFilepath = modelFilepth
         this._animationFilepathArray = animationFilepathArray
     }

@@ -12,9 +12,14 @@ export class SpatialGridController implements IComponent {
     constructor(params: {grid}) {
         this._grid = params.grid;
     }
-
+    
     update(deltaTime: number): void {  
-        console.log(this.FindNearbyEntities(10))
+        this._transform = this.Entity.getComponent(Transform)
+        this._client.position.x = this._transform.position.x
+        this._client.position.y = this._transform.position.z
+
+        // console.log(this.Entity);
+        this._grid.UpdateClient(this._client)
     }
 
     awake() {
@@ -26,6 +31,7 @@ export class SpatialGridController implements IComponent {
 
         this._client = this._grid.NewClient(pos, [1, 1]);
         this._client.entity = this.Entity;
+        console.log(this._client);
     }
 
     _OnPosition(msg) {

@@ -7,6 +7,7 @@ import { ObjectEntity } from "../../entities/ObjectEntity";
 import { Loader } from "../components/loader";
 import { Vector3 } from "three";
 import { SpatialGridController } from "../../game/world/components/SpatialHashGridController";
+import { Collider } from "../components/collider";
 
 
 export default class BasicCharacterController extends ObjectEntity {
@@ -24,6 +25,7 @@ export default class BasicCharacterController extends ObjectEntity {
       this.addComponent(new BasicCharacterControllerInput());
       this.addComponent(new Movement(decceleration, acceleration, velocity))
       this.addComponent(new SpatialGridController({grid: this._params.grid}))
+      this.addComponent(new Collider(4))
     }
     
     awake() {
