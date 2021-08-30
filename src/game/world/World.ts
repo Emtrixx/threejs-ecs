@@ -7,6 +7,8 @@ import { LoadingBar } from "../../utils/LoadingBar";
 import Entity from "../../utils/ecs/Entity";
 import { Zombie } from "../../character/Zombie/Zombie";
 import { SpatialHashGrid } from "../../utils/SpatialHashGrid";
+import { DecorativeObject } from "./DecorativeObject";
+import { decorativeObjectFilepaths } from "../../settings/DecorativeFilepaths";
 
 export default class World extends Entity {
   public entities: Entity[] = [];
@@ -19,6 +21,7 @@ export default class World extends Entity {
   private _loadingBar: LoadingBar;
   _manager: THREE.LoadingManager;
   private _grid: SpatialHashGrid;
+  private _decorativeModelsFilepaths: Array<string>;
 
   awake() {
     //Renderer
@@ -105,9 +108,9 @@ export default class World extends Entity {
 
     //Geometry
     const plane = new THREE.Mesh(
-      new THREE.PlaneGeometry(100, 100, 10, 10),
+      new THREE.PlaneGeometry(1000, 1000, 10, 10),
       new THREE.MeshStandardMaterial({
-        color: 0xffffff,
+        color: 0x6b9543,
       })
     );
     plane.castShadow = false;
@@ -120,6 +123,7 @@ export default class World extends Entity {
       [[-1000, -1000], [1000, 1000]], [100, 100]);
 
     //Loading Models
+    this._decorativeModelsFilepaths = decorativeObjectFilepaths()
     this._loadingBar = new LoadingBar()
     this._loadingBar.visible = false;
     this._manager = new THREE.LoadingManager()
@@ -142,7 +146,8 @@ export default class World extends Entity {
   load() {
     this._loadingBar.visible = true
     this._LoadAnimatedModel();
-    this._LoadZombie()
+    this._LoadDecorativeObjects()
+    this._LoadZombies()
   }
 
   onLoad() {
@@ -165,7 +170,7 @@ export default class World extends Entity {
     this.entities.push(this._controls)
   }
 
-  _LoadZombie() {
+  _LoadZombies() {
     const params = {
       camera: this._camera,
       scene: this._scene,
@@ -175,11 +180,31 @@ export default class World extends Entity {
       grid: this._grid
     };
     for(let i = 0; i<1; i++) {
-      this._zombie = new Zombie(params);
-      this.entities.push(this._zombie)
+      const zombie = new Zombie(params);
+      this.entities.push(zombie)
       
     }
   }
+    
+    _LoadDecorativeObjects() {
+      const params = {
+        camera: this._camera,
+        scene: this._scene,
+        loadingBar: this._loadingBar,
+        manager: this._manager,
+        grid: this._grid
+      };
+      // const model = new DecorativeObject(params, './models/decorativeObjects/'+this._decorativeModelsFilepaths[1]);
+      //       this.entities.push(model)
+      const list = this._decorativeModelsFilepaths;
+      for(let i = 0; i <  list.length; i += 2) {
+            const fp = './models/decorativeObjects/'+list[i+1]
+            const mp = './models/decorativeObjects/'+list[i]
+            const model = new DecorativeObject(params, fp, mp);
+            this.entities.push(model)
+        }
+    }
+  
 
   _OnWindowResize() {
     // Update sizes
