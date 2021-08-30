@@ -36,7 +36,6 @@ export class Loader implements IComponent {
         if (path == '.gltf' || path == '.glb') {
             this.gltfLoad(this._modelFilepath)
         } else if (path == '.obj') {
-            console.log('test');
             if (this._materialFilepath.length > 1) {
                 this.objMaterialLoad()
             } else {
@@ -98,13 +97,24 @@ export class Loader implements IComponent {
 
     objMaterialLoad() {
         var mtlLoader = new MTLLoader(this._manager);
-        console.log(this._materialFilepath);
-                
+
         mtlLoader.load(this._materialFilepath, materials => {
             materials.preload();
             var objLoader = new OBJLoader(this._manager);
             objLoader.setMaterials(materials);
             objLoader.load(this._modelFilepath, object => {
+                object.traverse((c) => {
+                    c.castShadow = true;
+                    if(c.material) {
+                        if(c.material.length > 1) {
+                            for(let material of c.material ) {
+                                material.shininess = 1
+                            }
+                        } else {
+                            c.material.shininess = 1
+                        }
+                    }
+                });
                 const loadedObject = { scene: null };
                 loadedObject.scene = object;
                 this.Entity._target = loadedObject;
@@ -169,15 +179,6 @@ export class Loader implements IComponent {
                     clip,
                     action
                 }
-            })
-    }
-
-    mtlLoad(materialPath) {
-        const loader = new MTLLoader(this._manager)
-        loader.load(materialPath,
-            materialObject => {
-                materialObject.preload()
-                console.log(materialObject);
             })
     }
 }

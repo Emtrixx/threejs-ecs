@@ -29,11 +29,10 @@ export class DecorativeObject extends ObjectEntity{
       }
 
     onLoad() {
-        console.log(this._target);
         this.getComponent(Transform).position.set(
-            (Math.random() * 2 - 1) * 500,
+            (Math.random() * 2 - 1) * 300,
             0,
-            (Math.random() * 2 - 1) * 500,
+            (Math.random() * 2 - 1) * 300,
         )
         this._target.scene.scale.set(5,5,5)
         this._params.scene.add(this._target.scene);

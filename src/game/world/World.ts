@@ -62,8 +62,8 @@ export default class World extends Entity {
     light.target.position.set(0, 0, 0);
     light.castShadow = true;
     light.shadow.bias = -0.001;
-    light.shadow.mapSize.width = 2048;
-    light.shadow.mapSize.height = 2048;
+    light.shadow.mapSize.width = 4096;
+    light.shadow.mapSize.height = 4096;
     light.shadow.camera.near = 0.1;
     light.shadow.camera.far = 500.0;
     light.shadow.camera.near = 0.5;
@@ -75,6 +75,7 @@ export default class World extends Entity {
     this._scene.add(light);
 
     let ambientLight = new THREE.AmbientLight(0x101010);
+    ambientLight.intensity = 4
     this._scene.add(ambientLight);
 
     //Controls
@@ -110,7 +111,7 @@ export default class World extends Entity {
     const plane = new THREE.Mesh(
       new THREE.PlaneGeometry(1000, 1000, 10, 10),
       new THREE.MeshStandardMaterial({
-        color: 0x6b9543,
+        color: 0x2b4533,
       })
     );
     plane.castShadow = false;
