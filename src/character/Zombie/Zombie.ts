@@ -23,8 +23,7 @@ export class Zombie extends ObjectEntity {
     this.addComponent(new Movement(decceleration, acceleration, velocity))
     this.addComponent(new ZombieInput)
     this.addComponent(new SpatialGridController({grid: this._params.grid}))
-    this.addComponent(new Collider(3));
-    
+    this.addComponent(new Collider(3))
     super.awake()
   }
 

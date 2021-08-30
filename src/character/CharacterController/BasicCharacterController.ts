@@ -25,6 +25,7 @@ export default class BasicCharacterController extends ObjectEntity {
       this.addComponent(new BasicCharacterControllerInput());
       this.addComponent(new Movement(decceleration, acceleration, velocity))
       this.addComponent(new SpatialGridController({grid: this._params.grid}))
+      this.addComponent(new Collider(4))
     }
     
     awake() {

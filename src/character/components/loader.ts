@@ -13,11 +13,12 @@ export class Loader implements IComponent {
     private _animationFilepathArray: string[];
     private _mixer: THREE.AnimationMixer;
     private _manager: THREE.LoadingManager;
-    private _materialFilepath: any;
+    private _materialFilepath: string;
 
-    constructor(modelFilepth: string, animationFilepathArray: Array<string>) {
-        this._modelFilepath = modelFilepth
+    constructor(modelFilepath: string, animationFilepathArray: Array<string> = [], material: string = "") {
+        this._modelFilepath = modelFilepath
         this._animationFilepathArray = animationFilepathArray
+        this._materialFilepath = material;
     }
 
     awake(): void {
@@ -28,20 +29,19 @@ export class Loader implements IComponent {
     update(_): void { }
 
     loadModel() {
-        let re = /\.\w+$/m
-        let path =this._modelFilepath.match(re)[0];
+        let re = /\.\w+/m
+
+        const path = this._modelFilepath.match(re)[0]
 
         if (path == '.gltf' || path == '.glb') {
             this.gltfLoad(this._modelFilepath)
         } else if (path == '.obj') {
-           
             if (this._materialFilepath.length > 1) {
                 this.objMaterialLoad()
             } else {
                 this.objLoad(this._modelFilepath)
             }
         }
-
     }
 
     gltfLoad(filepath) {
@@ -97,16 +97,24 @@ export class Loader implements IComponent {
 
     objMaterialLoad() {
         var mtlLoader = new MTLLoader(this._manager);
-        
-                
-        mtlLoader.load(this._materialFilepath, materials => {
-            
-            materials.preload();
 
-          
+        mtlLoader.load(this._materialFilepath, materials => {
+            materials.preload();
             var objLoader = new OBJLoader(this._manager);
             objLoader.setMaterials(materials);
             objLoader.load(this._modelFilepath, object => {
+                object.traverse((c) => {
+                    c.castShadow = true;
+                    if(c.material) {
+                        if(c.material.length > 1) {
+                            for(let material of c.material ) {
+                                material.shininess = 1
+                            }
+                        } else {
+                            c.material.shininess = 1
+                        }
+                    }
+                });
                 const loadedObject = { scene: null };
                 loadedObject.scene = object;
                 this.Entity._target = loadedObject;

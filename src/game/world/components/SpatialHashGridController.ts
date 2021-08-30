@@ -32,6 +32,7 @@ export class SpatialGridController implements IComponent {
 
         this._client = this._grid.NewClient(pos, [1, 1]);
         this._client.entity = this.Entity;
+        // console.log(this._client);
     }
 
     _OnPosition(msg) {

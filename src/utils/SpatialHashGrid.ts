@@ -46,9 +46,12 @@ export class SpatialHashGrid{
         UpdateClient(client) {
           const [x, y] = client.position;
           const [w, h] = client.dimensions;
+
+          // console.log(client);
       
           const i1 = this._GetCellIndex([x - w / 2, y - h / 2]);
           const i2 = this._GetCellIndex([x + w / 2, y + h / 2]);
+          
       
           if (client._cells.min[0] == i1[0] &&
               client._cells.min[1] == i1[1] &&
@@ -67,14 +70,15 @@ export class SpatialHashGrid{
       
           const i1 = this._GetCellIndex([x - w / 2, y - h / 2]);
           const i2 = this._GetCellIndex([x + w / 2, y + h / 2]);
-      
+
+            
           const clients = [];
           const queryId = this._queryIds++;
       
           for (let x = i1[0], xn = i2[0]; x <= xn; ++x) {
             for (let y = i1[1], yn = i2[1]; y <= yn; ++y) {
               let head = this._cells[x][y];
-      
+                // console.log(head);
               while (head) {
                 const v = head.client;
                 head = head.next;
@@ -82,6 +86,7 @@ export class SpatialHashGrid{
                 if (v._queryId != queryId) {
                   v._queryId = queryId;
                   clients.push(v);
+                //   console.log(clients);
                 }
               }
             }
