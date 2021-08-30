@@ -1,7 +1,10 @@
+import * as console from "console";
 import * as THREE from "three";
+import { Vector3 } from "three";
 import { Transform } from "../../components/transform";
 import { ObjectEntity } from "../../entities/ObjectEntity";
 import IComponent from "../../utils/ecs/IComponent";
+import { Collider } from "./collider";
 
 export class Movement implements IComponent {
     Entity: ObjectEntity;
@@ -89,8 +92,34 @@ export class Movement implements IComponent {
         sideways.multiplyScalar(velocity.x * deltaTime);
         forward.multiplyScalar(velocity.z * deltaTime);
 
-        this._transform.position.add(forward);
-        this._transform.position.add(sideways);
+        let newPosition: Vector3 = new Vector3( 0,0,0);
+        
+        
+        if (this._transform){
+          newPosition.copy(this._transform.position )
+        }
+        else{
+        
+        }
+
+       
+
+        newPosition.add(forward)
+        newPosition.add(sideways);
+        if (this.Entity.getComponent(Collider).lookForFutureCollison(newPosition)){
+          forward.multiplyScalar(-1);
+           this._transform.position.add(forward);
+        //  this._transform.position.add(sideways);
+
+
+        }
+        else{
+          this._transform.position.add(forward);
+          this._transform.position.add(sideways);
+            
+        }
+
+
         
         //without transform component
         // this.Entity._target.scene.position.add(forward)

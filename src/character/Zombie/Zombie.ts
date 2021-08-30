@@ -3,6 +3,7 @@ import { Vector3 } from "three";
 import { Transform } from "../../components/transform";
 import { ObjectEntity } from "../../entities/ObjectEntity";
 import { SpatialGridController } from "../../game/world/components/SpatialHashGridController";
+import { Collider } from "../components/collider";
 import { Loader } from "../components/loader";
 import { Movement } from "../components/movement-component";
 import { ZombieInput } from "./ZombieInput";
@@ -22,6 +23,8 @@ export class Zombie extends ObjectEntity {
     this.addComponent(new Movement(decceleration, acceleration, velocity))
     this.addComponent(new ZombieInput)
     this.addComponent(new SpatialGridController({grid: this._params.grid}))
+    this.addComponent(new Collider(3));
+    
     super.awake()
   }
 
@@ -34,6 +37,7 @@ export class Zombie extends ObjectEntity {
 
   onLoad() {
     this._params.scene.add(this._target.scene);
+    
   }
 
   spawnpoint(): Vector3 {

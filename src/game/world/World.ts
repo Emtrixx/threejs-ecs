@@ -175,8 +175,8 @@ export default class World extends Entity {
       grid: this._grid
     };
     for(let i = 0; i<20; i++) {
-      this._zombie = new Zombie(params);
-      this.entities.push(this._zombie)
+      const zombie = new Zombie(params);
+      this.entities.push(zombie)
       
     }
   }
