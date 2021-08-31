@@ -8,7 +8,7 @@ export class Collider implements IComponent {
     private _grid: SpatialGridController;
     private _radius: number;
     private _transform: Transform;
-    collison: boolean = false;
+    collision: boolean = false;
 
     constructor(radius: number) {
         this._radius = radius;

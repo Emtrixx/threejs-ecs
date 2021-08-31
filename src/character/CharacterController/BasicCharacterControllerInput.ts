@@ -1,10 +1,12 @@
 import Entity from "../../utils/ecs/Entity";
 import IComponent from "../../utils/ecs/IComponent";
+import { AttackController } from "../components/attackController";
 import { Movement } from "../components/movement-component";
 
 export default class BasicCharacterControllerInput implements IComponent {
   Entity: Entity;
   private _movement: Movement;
+  private _attack: AttackController;
 
   update(_): void {
     //TODO
@@ -12,6 +14,7 @@ export default class BasicCharacterControllerInput implements IComponent {
 
   awake() {
     this._movement = this.Entity.getComponent(Movement)
+    this._attack = this.Entity.getComponent(AttackController)
     document.addEventListener("keydown", (e) => this.onKeyDown(e), false);
     document.addEventListener("keyup", (e) => this.onKeyUp(e), false);
   }
@@ -36,6 +39,9 @@ export default class BasicCharacterControllerInput implements IComponent {
       case "ShiftLeft":
         this._movement._run = true;
         break;
+      case "KeyC":
+        this._attack._primary = true;
+        break;
     }
   }
   onKeyUp(e: KeyboardEvent): any {
@@ -57,6 +63,9 @@ export default class BasicCharacterControllerInput implements IComponent {
         break;
       case "ShiftLeft":
         this._movement._run = false;
+        break;
+      case "KeyC":
+        this._attack._primary = false;
         break;
     }
   }

@@ -26,11 +26,12 @@ export class IdleState extends State {
 
     update() {
         const move = this._parent._movement;
+        const attack = this._parent._attack
         if (move._forward || move._backward) {
             this._parent.SetState('walk');
         } 
-        // else if (move.) {
-        //     this._parent.SetState('attack');
-        // }
+        else if(attack._primary) {
+            this._parent.SetState('attack');
+        }
     }
 };
