@@ -9,6 +9,7 @@ import { Zombie } from "../../character/Zombie/Zombie";
 import { SpatialHashGrid } from "../../utils/SpatialHashGrid";
 import { DecorativeObject } from "./DecorativeObject";
 import { decorativeObjectFilepaths } from "../../settings/DecorativeFilepaths";
+import { Transform } from "../../components/transform";
 
 export default class World extends Entity {
   public entities: Entity[] = [];
@@ -22,6 +23,8 @@ export default class World extends Entity {
   _manager: THREE.LoadingManager;
   private _grid: SpatialHashGrid;
   private _decorativeModelsFilepaths: Array<string>;
+  planeActiveGrid: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshStandardMaterial>;
+  private _celPos: number[];
 
   awake() {
     //Renderer
@@ -142,6 +145,15 @@ export default class World extends Entity {
     }
     this._stats.update();
     this._threejs.render(this._scene, this._camera);
+    
+    //experimental
+    const pos = this._controls.getComponent(Transform).position
+    if(this.planeActiveGrid) {
+      this._celPos = this._grid.getCellPosition([pos.x, pos.z])
+      
+
+      this.planeActiveGrid.position.set(this._celPos[0], pos.y + 5, this._celPos[1])
+    }
   }
 
   load() {
@@ -150,13 +162,14 @@ export default class World extends Entity {
     this._LoadDecorativeObjects()
     this._LoadZombies()
   }
-
+  
   onLoad() {
     console.log('done');
     this._loadingBar.visible = false;
     for (const entity of this.entities) {
       entity.onLoad()
     }
+    this._showActiveGrid()
   }
 
   _LoadAnimatedModel() {
@@ -169,6 +182,27 @@ export default class World extends Entity {
     };
     this._controls = new BasicCharacterController(params);
     this.entities.push(this._controls)
+  }
+
+
+  //experimental
+  _showActiveGrid() {
+    const pos = this._controls.getComponent(Transform).position
+    // console.log(pos);
+    new THREE.PlaneGeometry(10,10,2,2)
+    this.planeActiveGrid = new THREE.Mesh(
+      new THREE.PlaneGeometry(10, 10, 10, 10),
+      new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+      })
+    );
+    this._celPos = this._grid.getCellPosition([pos.x, pos.z])
+    // console.log(_celPos);
+    this.planeActiveGrid.position.set(this._celPos[0], pos.y + 5, this._celPos[1])
+    this.planeActiveGrid.castShadow = false;
+    this.planeActiveGrid.receiveShadow = true;
+    this.planeActiveGrid.rotation.x = -Math.PI / 2;
+    this._scene.add(this.planeActiveGrid)
   }
 
   _LoadZombies() {

@@ -25,6 +25,8 @@ export class SpatialHashGrid{
       
           return [xIndex, yIndex];
         }
+
+
       
         NewClient(position, dimensions) {
           const client = {
@@ -51,7 +53,7 @@ export class SpatialHashGrid{
       
           const i1 = this._GetCellIndex([x - w / 2, y - h / 2]);
           const i2 = this._GetCellIndex([x + w / 2, y + h / 2]);
-          
+       
       
           if (client._cells.min[0] == i1[0] &&
               client._cells.min[1] == i1[1] &&
@@ -92,6 +94,21 @@ export class SpatialHashGrid{
             }
           }
           return clients;
+        }
+
+        getCellPosition(position): Array<number>{
+          const [x, y] = position;
+          // console.log(x + 50);
+          // console.log(y + 50);
+
+          // console.log(client);
+      
+          const i = this._GetCellIndex([x, y]);
+          i[0] -= 50;
+          i[1] -= 50;
+          
+          // console.log();
+          return i
         }
       
         _Insert(client) {

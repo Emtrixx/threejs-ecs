@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { Transform } from "../../components/transform";
 import { ObjectEntity } from "../../entities/ObjectEntity";
 import IComponent from "../../utils/ecs/IComponent";
+import FiniteStateMachine from "../CharacterAnimation/FiniteStateMachine";
 import { Collider } from "./collider";
 
 export class Movement implements IComponent {
@@ -17,17 +18,22 @@ export class Movement implements IComponent {
   _backward: boolean;
   _left: boolean;
   _right: boolean;
+  private _stateMachine: FiniteStateMachine;
 
   constructor(decelleration, acceleration, velocity) {
     this._decceleration = decelleration;
     this._acceleration = acceleration;
     this._velocity = velocity;
   }
-
+  
   awake(): void {
     if (this.Entity.hasComponent(Collider)) {
       this._collider = this.Entity.getComponent(Collider)
     }
+    if(this.Entity.hasComponent(FiniteStateMachine)) {
+      this._stateMachine = this.Entity.getComponent(FiniteStateMachine)
+    }
+    this._transform = this.Entity.getComponent(Transform)
   }
 
   update(deltaTime: number): void {
@@ -37,7 +43,6 @@ export class Movement implements IComponent {
     //   this._velocity.multiplyScalar(-1)
     //   acc.multiplyScalar(0)
     // }
-    this._transform = this.Entity.getComponent(Transform)
     const velocity = this._velocity;
     const frameDecceleration = new THREE.Vector3(
       velocity.x * this._decceleration.x,
@@ -62,9 +67,10 @@ export class Movement implements IComponent {
       acc.multiplyScalar(2.0);
     }
 
-    // if (this._stateMachine._currentState.name == 'dance') {
-    //   acc.multiplyScalar(0.0);
-    // }
+    // console.log(this._stateMachine)
+    if (this._stateMachine && this._stateMachine._currentState && this._stateMachine._currentState.name == 'attack') {
+      acc.multiplyScalar(0.2);
+    }
 
     if (this._forward) {
       velocity.z += acc.z * deltaTime;

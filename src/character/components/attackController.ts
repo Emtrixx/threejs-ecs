@@ -17,8 +17,6 @@ export class AttackController implements IComponent{
     update(deltaTime: number): void {
         if (this._primary) {
             this._stateMachine.SetState('attack')
-
-
         }
     }
 }
