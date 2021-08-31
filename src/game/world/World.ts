@@ -23,6 +23,7 @@ export default class World extends Entity {
   _manager: THREE.LoadingManager;
   private _grid: SpatialHashGrid;
   private _decorativeModelsFilepaths: Array<string>;
+  //experimental
   planeActiveGrid: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshStandardMaterial>;
   private _celPos: number[];
 
@@ -150,8 +151,6 @@ export default class World extends Entity {
     const pos = this._controls.getComponent(Transform).position
     if(this.planeActiveGrid) {
       this._celPos = this._grid.getCellPosition([pos.x, pos.z])
-      
-
       this.planeActiveGrid.position.set(this._celPos[0], pos.y + 5, this._celPos[1])
     }
   }
@@ -184,27 +183,7 @@ export default class World extends Entity {
     this.entities.push(this._controls)
   }
 
-
-  //experimental
-  _showActiveGrid() {
-    const pos = this._controls.getComponent(Transform).position
-    // console.log(pos);
-    new THREE.PlaneGeometry(10,10,2,2)
-    this.planeActiveGrid = new THREE.Mesh(
-      new THREE.PlaneGeometry(10, 10, 10, 10),
-      new THREE.MeshStandardMaterial({
-        color: 0xffffff,
-      })
-    );
-    this._celPos = this._grid.getCellPosition([pos.x, pos.z])
-    // console.log(_celPos);
-    this.planeActiveGrid.position.set(this._celPos[0], pos.y + 5, this._celPos[1])
-    this.planeActiveGrid.castShadow = false;
-    this.planeActiveGrid.receiveShadow = true;
-    this.planeActiveGrid.rotation.x = -Math.PI / 2;
-    this._scene.add(this.planeActiveGrid)
-  }
-
+  
   _LoadZombies() {
     const params = {
       camera: this._camera,
@@ -214,38 +193,57 @@ export default class World extends Entity {
       manager: this._manager,
       grid: this._grid
     };
-    for(let i = 0; i<20; i++) {
+    for(let i = 0; i<0; i++) {
       const zombie = new Zombie(params);
       this.entities.push(zombie)
       
     }
   }
-    
-    _LoadDecorativeObjects() {
-      const params = {
+  
+  _LoadDecorativeObjects() {
+    const params = {
         camera: this._camera,
         scene: this._scene,
         loadingBar: this._loadingBar,
         manager: this._manager,
         grid: this._grid
       };
-      // const model = new DecorativeObject(params, './models/decorativeObjects/'+this._decorativeModelsFilepaths[1]);
-      //       this.entities.push(model)
       const list = this._decorativeModelsFilepaths;
       for(let i = 0; i <  list.length; i += 2) {
-            const fp = './models/decorativeObjects/'+list[i+1]
-            const mp = './models/decorativeObjects/'+list[i]
-            const model = new DecorativeObject(params, fp, mp);
-            this.entities.push(model)
-        }
+        const fp = './models/decorativeObjects/'+list[i+1]
+        const mp = './models/decorativeObjects/'+list[i]
+        const model = new DecorativeObject(params, fp, mp);
+        this.entities.push(model)
+      }
     }
-  
+    
+    
+    _OnWindowResize() {
+      // Update sizes
+      this._camera.aspect = window.innerWidth / window.innerHeight;
+      this._camera.updateProjectionMatrix();
+      this._threejs.setSize(window.innerWidth, window.innerHeight);
+    }
+    
 
-  _OnWindowResize() {
-    // Update sizes
-    this._camera.aspect = window.innerWidth / window.innerHeight;
-    this._camera.updateProjectionMatrix();
-    this._threejs.setSize(window.innerWidth, window.innerHeight);
+    //experimental
+    _showActiveGrid() {
+      const pos = this._controls.getComponent(Transform).position
+      new THREE.PlaneGeometry(10,10,2,2)
+      this.planeActiveGrid = new THREE.Mesh(
+        new THREE.PlaneGeometry(20, 20, 10, 10),
+        new THREE.MeshStandardMaterial({
+          color: 0xffffff,
+          transparent: true,
+          opacity: 0.4
+        })
+      );
+      this._celPos = this._grid.getCellPosition([pos.x, pos.z])
+      this.planeActiveGrid.position.set(this._celPos[0], pos.y + 5, this._celPos[1])
+      this.planeActiveGrid.castShadow = false;
+      this.planeActiveGrid.receiveShadow = true;
+      this.planeActiveGrid.rotation.x = -Math.PI / 2;
+      this._scene.add(this.planeActiveGrid)
+    }
   }
-
-}
+  

@@ -97,17 +97,11 @@ export class SpatialHashGrid{
         }
 
         getCellPosition(position): Array<number>{
-          const [x, y] = position;
-          // console.log(x + 50);
-          // console.log(y + 50);
-
-          // console.log(client);
-      
+          const [x, y] = position;     
           const i = this._GetCellIndex([x, y]);
-          i[0] -= 50;
-          i[1] -= 50;
-          
-          // console.log();
+          //Hardcoded for current grid
+          i[0] = (i[0] + 1 - 50) * 20 ;
+          i[1] = (i[1] + 1- 50) * 20
           return i
         }
       

@@ -67,7 +67,6 @@ export class Movement implements IComponent {
       acc.multiplyScalar(2.0);
     }
 
-    // console.log(this._stateMachine)
     if (this._stateMachine && this._stateMachine._currentState && this._stateMachine._currentState.name == 'attack') {
       acc.multiplyScalar(0.2);
     }
