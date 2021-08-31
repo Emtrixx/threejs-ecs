@@ -34,7 +34,7 @@ export class DecorativeObject extends ObjectEntity{
             0,
             (Math.random() * 2 - 1) * 300,
         )
-        this._target.scene.scale.set(8,8,8)
+        this._target.scene.scale.set(10,10,10)
         this._params.scene.add(this._target.scene);
     }
 

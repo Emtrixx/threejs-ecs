@@ -103,7 +103,7 @@ export class Loader implements IComponent {
             var objLoader = new OBJLoader(this._manager);
             objLoader.setMaterials(materials);
             objLoader.load(this._modelFilepath, object => {
-                object.traverse((c) => {
+                object.traverse((c: any) => {
                     c.castShadow = true;
                     if(c.material) {
                         if(c.material.length > 1) {

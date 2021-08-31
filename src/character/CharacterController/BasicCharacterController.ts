@@ -12,12 +12,16 @@ import { AttackController } from "../components/attackController";
 
 
 export default class BasicCharacterController extends ObjectEntity {
+    name: string;
     constructor(params) {
       super()
+      this.name = 'player'
       this._params = params;
   
       const decceleration = new THREE.Vector3(-0.0005, -0.0001, -5.0);
+      decceleration.multiplyScalar(4)
       const acceleration = new THREE.Vector3(1, 0.25, 50.0);
+      acceleration.multiplyScalar(3)
       const velocity = new THREE.Vector3(0, 0, 0);
 
       this.addComponent(new Transform())

@@ -1,39 +1,40 @@
 import * as THREE from "three";
+import { Vector3 } from "three";
 import { Transform } from "../../components/transform";
 import { ObjectEntity } from "../../entities/ObjectEntity";
+import { SpatialGridController } from "../../game/world/components/SpatialHashGridController";
 import IComponent from "../../utils/ecs/IComponent";
+import BasicCharacterController from "../CharacterController/BasicCharacterController";
 import { Movement } from "../components/movement-component";
 
 export class ZombieInput implements IComponent {
     Entity: ObjectEntity;
-    private _playerTransform: Transform;
 
     private _movement: Movement;
-    private _following: boolean
-    private _transform: Transform;
+    private _grid: SpatialGridController;
 
     awake(): void {
-        this._following = true
-        this._transform = this.Entity.getComponent(Transform)
         this._movement = this.Entity.getComponent(Movement)
-        this._playerTransform = this.Entity._params.player.getComponent(Transform)
+        this._grid = this.Entity.getComponent(SpatialGridController)
     }
     
     update(_): void {
         if(!this.Entity._target) {
             return
         }
+
         //Should be under transform but threejs lookAt function does the job
         const controlObject = this.Entity._target.scene;
-        controlObject.lookAt(this._playerTransform.position);
 
-        if(this._transform.position.distanceTo(this._playerTransform.position)< 30) {
-            this._movement._forward = true;
-        } else {
-            this._movement._forward = false;
-        }
-
-        
+        const near: Array<object> = this._grid.FindNearbyEntities(30)
+        for(let i = 0; i<near.length; i++) {
+           if(near[i].entity.name == 'player') {
+                const pos = new Vector3(near[i].position[0], 0, near[i].position[1])
+                controlObject.lookAt(pos)
+                this._movement._forward = true;
+                return
+           }
+        } 
+        this._movement._forward = false;
     }
-
 }

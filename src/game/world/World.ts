@@ -193,7 +193,7 @@ export default class World extends Entity {
       manager: this._manager,
       grid: this._grid
     };
-    for(let i = 0; i<0; i++) {
+    for(let i = 0; i<3; i++) {
       const zombie = new Zombie(params);
       this.entities.push(zombie)
       
@@ -227,6 +227,7 @@ export default class World extends Entity {
     
 
     //experimental
+    //shows a white plane for the current grid cell of the player
     _showActiveGrid() {
       const pos = this._controls.getComponent(Transform).position
       new THREE.PlaneGeometry(10,10,2,2)

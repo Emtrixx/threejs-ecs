@@ -9,8 +9,10 @@ import { Movement } from "../components/movement-component";
 import { ZombieInput } from "./ZombieInput";
 
 export class Zombie extends ObjectEntity {
+  name: string;
   constructor(params) {
     super();
+    this.name = 'zombie'
     this._params = params
   }
 
