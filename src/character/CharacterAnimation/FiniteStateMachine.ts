@@ -70,7 +70,24 @@ export class CharacterFSM extends FiniteStateMachine {
     this._AddState('walk', WalkState);
     this._AddState('run', RunState);
     this._AddState('attack', AttackState);
-    // this._AddState('death', DeathState);
+    this._AddState('death', DeathState);
+  }
+}
+
+export class ZombieFSM extends FiniteStateMachine {
+  _proxy: any;
+  constructor(proxy) {
+    super();
+    this._proxy = proxy;
+    this._Init();
+  }
+
+  _Init() {
+    this._AddState('idle', IdleState);
+    this._AddState('walk', WalkState);
+    this._AddState('run', RunState);
+    this._AddState('attack', AttackState);
+    this._AddState('death', DeathState);
   }
 }
 

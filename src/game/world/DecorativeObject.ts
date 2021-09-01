@@ -1,8 +1,10 @@
 import * as THREE from "three";
 import { Vector3 } from "three";
+import { Collider } from "../../character/components/collider";
 import { Loader } from "../../character/components/loader";
 import { Transform } from "../../components/transform";
 import { ObjectEntity } from "../../entities/ObjectEntity";
+import { SpatialGridController } from "./components/SpatialHashGridController";
 
 export class DecorativeObject extends ObjectEntity{
     private _filepath: string;
@@ -18,6 +20,8 @@ export class DecorativeObject extends ObjectEntity{
     }
     
     awake() {
+        this.addComponent(new SpatialGridController({grid: this._params.grid}))
+        this.addComponent(new Collider(2))
         super.awake()
     }
 

@@ -193,7 +193,7 @@ export default class World extends Entity {
       manager: this._manager,
       grid: this._grid
     };
-    for(let i = 0; i<3; i++) {
+    for(let i = 0; i<8; i++) {
       const zombie = new Zombie(params);
       this.entities.push(zombie)
       
@@ -236,13 +236,12 @@ export default class World extends Entity {
         new THREE.MeshStandardMaterial({
           color: 0xffffff,
           transparent: true,
-          opacity: 0.4
+          opacity: 0.3
         })
       );
       this._celPos = this._grid.getCellPosition([pos.x, pos.z])
       this.planeActiveGrid.position.set(this._celPos[0], pos.y + 5, this._celPos[1])
       this.planeActiveGrid.castShadow = false;
-      this.planeActiveGrid.receiveShadow = true;
       this.planeActiveGrid.rotation.x = -Math.PI / 2;
       this._scene.add(this.planeActiveGrid)
     }

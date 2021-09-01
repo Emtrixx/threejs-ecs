@@ -27,6 +27,7 @@ export class SpatialGridController implements IComponent {
             this._transform.position.z,
         ];
 
+        //width and height hardcoded
         this._client = this._grid.NewClient(pos, [1, 1]);
         this._client.entity = this.Entity;
     }
@@ -36,7 +37,7 @@ export class SpatialGridController implements IComponent {
         this._grid.UpdateClient(this._client);
     }
 
-    FindNearbyEntities(range): Array<object> {
+    FindNearbyEntities(range): Array<any> {
         const results = this._grid.FindNear(
             [this._transform.position.x, this._transform.position.z], [range, range]);
 

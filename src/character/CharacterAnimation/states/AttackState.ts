@@ -19,10 +19,9 @@ export class AttackState extends State {
       this._action = this._parent._proxy._animations['attack'].action;
       const mixer = this._action.getMixer();
       mixer.addEventListener('finished', this._FinishedCallback);
-  
+      
       if (prevState) {
         const prevAction = this._parent._proxy._animations[prevState.name].action;
-  
         this._action.reset();  
         this._action.setLoop(THREE.LoopOnce, 1);
         this._action.clampWhenFinished = true;

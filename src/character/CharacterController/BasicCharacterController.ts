@@ -9,6 +9,7 @@ import { Vector3 } from "three";
 import { SpatialGridController } from "../../game/world/components/SpatialHashGridController";
 import { Collider } from "../components/collider";
 import { AttackController } from "../components/attackController";
+import { Stats } from "../components/stats";
 
 
 export default class BasicCharacterController extends ObjectEntity {
@@ -30,6 +31,8 @@ export default class BasicCharacterController extends ObjectEntity {
       this.addComponent(new BasicCharacterControllerInput());
       this.addComponent(new Movement(decceleration, acceleration, velocity))
       this.addComponent(new SpatialGridController({grid: this._params.grid}))
+
+      this.addComponent(new Stats(100, 25))
       this.addComponent(new AttackController())
     }
     
@@ -47,7 +50,7 @@ export default class BasicCharacterController extends ObjectEntity {
     }
     
     onLoad() {
-      this._target.scene.scale.set(5,5,5)
+      this._target.scene.scale.set(4,4,4)
       this._params.scene.add(this._target.scene);
       this.getComponent(CharacterFSM).SetState('idle')
     }
