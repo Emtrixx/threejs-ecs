@@ -11,37 +11,37 @@ import { WalkState } from "./states/WalkState";
 
 export default class FiniteStateMachine implements IComponent {
   Entity: Entity;
-  _states: object = {};
-  _currentState: State | null;
-  _movement: Movement;
+  states: object = {};
+  currentState: State | null;
+  movement: Movement;
   //wird in loader gesetzt
-  _mixer: THREE.AnimationMixer
-  _attack: AttackController;
+  mixer: THREE.AnimationMixer
+  attack: AttackController;
 
   constructor() {
-    this._states = {};
-    this._currentState = null;
+    this.states = {};
+    this.currentState = null;
   }
 
   awake(): void {
-    this._movement = this.Entity.getComponent(Movement)
-    this._attack = this.Entity.getComponent(AttackController)
+    this.movement = this.Entity.getComponent(Movement)
+    this.attack = this.Entity.getComponent(AttackController)
   }
 
   update(deltaTime: number): void {
-    if (this._currentState) {
-        this._currentState.update(deltaTime);
+    if (this.currentState) {
+        this.currentState.update(deltaTime);
         //mixer update
-        this._mixer.update(deltaTime)
+        this.mixer.update(deltaTime)
       }
   }
 
-  _AddState(name, type) {
-    this._states[name] = type;
+  AddState(name, type) {
+    this.states[name] = type;
   }
 
   SetState(name) {
-    const prevState = this._currentState;
+    const prevState = this.currentState;
 
     if (prevState) {
       if (prevState.name == name) {
@@ -50,54 +50,50 @@ export default class FiniteStateMachine implements IComponent {
       prevState.exit();
     }
 
-    const state = new this._states[name](this);
+    const state = new this.states[name](this);
 
-    this._currentState = state;
+    this.currentState = state;
     state.enter(prevState);
   }
 }
 
 export class CharacterFSM extends FiniteStateMachine {
-  _proxy: any;
+  proxy: any;
   constructor(proxy) {
     super();
-    this._proxy = proxy;
-    this._Init();
+    this.proxy = proxy;
+    this.Init();
   }
 
-  _Init() {
-    this._AddState('idle', IdleState);
-    this._AddState('walk', WalkState);
-    this._AddState('run', RunState);
-    this._AddState('attack', AttackState);
-    this._AddState('death', DeathState);
+  Init() {
+    this.AddState('idle', IdleState);
+    this.AddState('walk', WalkState);
+    this.AddState('run', RunState);
+    this.AddState('attack', AttackState);
+    this.AddState('death', DeathState);
   }
 }
 
 export class ZombieFSM extends FiniteStateMachine {
-  _proxy: any;
+  proxy: any;
   constructor(proxy) {
     super();
-    this._proxy = proxy;
-    this._Init();
+    this.proxy = proxy;
+    this.Init();
   }
 
-  _Init() {
-    this._AddState('idle', IdleState);
-    this._AddState('walk', WalkState);
-    this._AddState('run', RunState);
-    this._AddState('attack', AttackState);
-    this._AddState('death', DeathState);
+  Init() {
+    this.AddState('idle', IdleState);
+    this.AddState('walk', WalkState);
+    this.AddState('run', RunState);
+    this.AddState('attack', AttackState);
+    this.AddState('death', DeathState);
   }
 }
 
 export class BasicCharacterControllerProxy {
-  _animations: object;
+  animations: object;
   constructor(animations: object) {
-    this._animations = animations;
-  }
-
-  get animations() {
-    return this._animations;
+    this.animations = animations;
   }
 };

@@ -16,7 +16,7 @@ export class Zombie extends ObjectEntity {
   constructor(params) {
     super();
     this.name = 'zombie'
-    this._params = params
+    this.params = params
   }
 
   awake() {
@@ -30,24 +30,24 @@ export class Zombie extends ObjectEntity {
     this.addComponent(new Loader("./models/zombie/Zombie.glb", [p+'idle.glb', p+'walk.glb', p+'run.glb', p+'attack.glb', p+'death.glb']))
     this.addComponent(new Movement(decceleration, acceleration, velocity))
     this.addComponent(new ZombieInput)
-    this.addComponent(new SpatialGridController({grid: this._params.grid}))
+    this.addComponent(new SpatialGridController({grid: this.params.grid}))
     this.addComponent(new Stats(100, 100))
     this.addComponent(new Collider(3))
     this.addComponent(new AttackController())
-    this.addComponent(new ZombieFSM(new BasicCharacterControllerProxy(this._animations)))
+    this.addComponent(new ZombieFSM(new BasicCharacterControllerProxy(this.animations)))
     super.awake()
   }
 
   update(deltaTime) {
-    if (!this._target) {
+    if (!this.target) {
       return;
     }
     super.update(deltaTime)
   }
 
   onLoad() {
-    this._target.scene.scale.set(4,4,4)
-    this._params.scene.add(this._target.scene);
+    this.target.scene.scale.set(4,4,4)
+    this.params.scene.add(this.target.scene);
     this.getComponent(ZombieFSM).SetState('idle')
   }
 

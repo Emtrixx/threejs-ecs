@@ -16,13 +16,13 @@ export class Transform implements IComponent {
     }
 
     awake(): void {
-        if(!this.Entity._target) {
+        if(!this.Entity.target) {
             return
         }
-        this.Entity._target.scene.position.set(this.position.x, this.position.y, this.position.z)
+        this.Entity.target.scene.position.set(this.position.x, this.position.y, this.position.z)
     }
     
     update(_): void {
-        this.Entity._target.scene.position.set(this.position.x, this.position.y, this.position.z)
+        this.Entity.target.scene.position.set(this.position.x, this.position.y, this.position.z)
     }
 }

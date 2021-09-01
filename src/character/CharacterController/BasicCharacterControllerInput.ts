@@ -5,16 +5,16 @@ import { Movement } from "../components/movement-component";
 
 export default class BasicCharacterControllerInput implements IComponent {
   Entity: Entity;
-  private _movement: Movement;
-  private _attack: AttackController;
+  private movement: Movement;
+  private attack: AttackController;
 
   update(_): void {
     //TODO
   }
 
   awake() {
-    this._movement = this.Entity.getComponent(Movement)
-    this._attack = this.Entity.getComponent(AttackController)
+    this.movement = this.Entity.getComponent(Movement)
+    this.attack = this.Entity.getComponent(AttackController)
     document.addEventListener("keydown", (e) => this.onKeyDown(e), false);
     document.addEventListener("keyup", (e) => this.onKeyUp(e), false);
   }
@@ -22,50 +22,50 @@ export default class BasicCharacterControllerInput implements IComponent {
   onKeyDown(e: KeyboardEvent): any {
     switch (e.code) {
       case "KeyW":
-        this._movement._forward = true;
+        this.movement.forward = true;
         break;
       case "KeyA":
-        this._movement._left = true;
+        this.movement.left = true;
         break;
       case "KeyS":
-        this._movement._backward = true;
+        this.movement.backward = true;
         break;
       case "KeyD":
-        this._movement._right = true;
+        this.movement.right = true;
         break;
       case "Space":
-        this._movement._jump = true;
+        this.movement.jump = true;
         break;
       case "ShiftLeft":
-        this._movement._run = true;
+        this.movement.run = true;
         break;
       case "KeyC":
-        this._attack._primary = true;
+        this.attack.primary = true;
         break;
     }
   }
   onKeyUp(e: KeyboardEvent): any {
     switch (e.code) {
       case "KeyW":
-        this._movement._forward = false;
+        this.movement.forward = false;
         break;
       case "KeyA":
-        this._movement._left = false;
+        this.movement.left = false;
         break;
       case "KeyS":
-        this._movement._backward = false;
+        this.movement.backward = false;
         break;
       case "KeyD":
-        this._movement._right = false;
+        this.movement.right = false;
         break;
       case "Space":
-        this._movement._jump = false;
+        this.movement.jump = false;
         break;
       case "ShiftLeft":
-        this._movement._run = false;
+        this.movement.run = false;
         break;
       case "KeyC":
-        this._attack._primary = false;
+        this.attack.primary = false;
         break;
     }
   }

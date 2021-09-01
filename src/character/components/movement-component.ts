@@ -7,55 +7,55 @@ import { Collider } from "./collider";
 
 export class Movement implements IComponent {
   Entity: ObjectEntity;
-  private _transform: Transform;
-  private _decceleration: THREE.Vector3;
-  private _acceleration: THREE.Vector3;
-  private _velocity: THREE.Vector3;
-  private _collider: Collider;
-  _run: boolean;
-  _jump: boolean;
-  _forward: boolean;
-  _backward: boolean;
-  _left: boolean;
-  _right: boolean;
-  private _stateMachine: FiniteStateMachine;
+  private transform: Transform;
+  private decceleration: THREE.Vector3;
+  private acceleration: THREE.Vector3;
+  private velocity: THREE.Vector3;
+  private collider: Collider;
+  run: boolean;
+  jump: boolean;
+  forward: boolean;
+  backward: boolean;
+  left: boolean;
+  right: boolean;
+  private stateMachine: FiniteStateMachine;
 
   constructor(decelleration, acceleration, velocity) {
-    this._decceleration = decelleration;
-    this._acceleration = acceleration;
-    this._velocity = velocity;
+    this.decceleration = decelleration;
+    this.acceleration = acceleration;
+    this.velocity = velocity;
   }
   
   awake(): void {
     if (this.Entity.hasComponent(Collider)) {
-      this._collider = this.Entity.getComponent(Collider)
+      this.collider = this.Entity.getComponent(Collider)
     }
     if(this.Entity.hasComponent(FiniteStateMachine)) {
-      this._stateMachine = this.Entity.getComponent(FiniteStateMachine)
+      this.stateMachine = this.Entity.getComponent(FiniteStateMachine)
     }
-    this._transform = this.Entity.getComponent(Transform)
+    this.transform = this.Entity.getComponent(Transform)
   }
 
   update(deltaTime: number): void {
-    const acc = this._acceleration.clone();
-    const collision = this._collider && this._collider.collision
+    const acc = this.acceleration.clone();
+    const collision = this.collider && this.collider.collision
 
     // Old Collision Handling
-    // if (this._collider && this._collider.collision) {
-    //   this._velocity.multiplyScalar(-1)
+    // if (this.collider && this.collider.collision) {
+    //   this.velocity.multiplyScalar(-1)
     //   acc.multiplyScalar(0)
     // }
 
-    // if (this._collider && this._collider.collision) {
-    //   this._forward = !this._forward
-    //   this._backward = !this._backward
+    // if (this.collider && this.collider.collision) {
+    //   this.forward = !this.forward
+    //   this.backward = !this.backward
     // }
 
-    const velocity = this._velocity;
+    const velocity = this.velocity;
     const frameDecceleration = new THREE.Vector3(
-      velocity.x * this._decceleration.x,
-      velocity.y * this._decceleration.y,
-      velocity.z * this._decceleration.z
+      velocity.x * this.decceleration.x,
+      velocity.y * this.decceleration.y,
+      velocity.z * this.decceleration.z
     );
     frameDecceleration.multiplyScalar(deltaTime);
     frameDecceleration.z =
@@ -64,53 +64,53 @@ export class Movement implements IComponent {
 
     velocity.add(frameDecceleration);
 
-    const controlObject = this.Entity._target;
+    const controlObject = this.Entity.target;
 
-    const _Q = new THREE.Quaternion();
-    const _A = new THREE.Vector3();
-    const _R = controlObject.scene.quaternion.clone();
+    const Q = new THREE.Quaternion();
+    const A = new THREE.Vector3();
+    const R = controlObject.scene.quaternion.clone();
 
 
-    if (this._run) {
+    if (this.run) {
       acc.multiplyScalar(3.0);
     }
 
-    if (this._stateMachine && this._stateMachine._currentState && this._stateMachine._currentState.name == 'attack') {
+    if (this.stateMachine && this.stateMachine.currentState && this.stateMachine.currentState.name == 'attack') {
       acc.multiplyScalar(0.2);
     }
 
-    if (this._forward) {
+    if (this.forward) {
       velocity.z += acc.z * deltaTime;
     }
-    if (this._backward) {
+    if (this.backward) {
       velocity.z -= acc.z * deltaTime;
     }
 
     // Another way of handling collision
-    // if(this._forward && collision) {
+    // if(this.forward && collision) {
     //   velocity.z -= acc.z * deltaTime
-    // } else if (this._forward) {
+    // } else if (this.forward) {
     //   velocity.z += acc.z * deltaTime;
     // }
 
-    // if(this._backward && collision) {
+    // if(this.backward && collision) {
     //   velocity.z += acc.z * deltaTime
-    // } else if (this._backward) {
+    // } else if (this.backward) {
     //   velocity.z -= acc.z * deltaTime;
     // }
 
-    if (this._left) {
-      _A.set(0, 1, 0);
-      _Q.setFromAxisAngle(_A, 2.0 * Math.PI * deltaTime * this._acceleration.y);
-      _R.multiply(_Q);
+    if (this.left) {
+      A.set(0, 1, 0);
+      Q.setFromAxisAngle(A, 2.0 * Math.PI * deltaTime * this.acceleration.y);
+      R.multiply(Q);
     }
-    if (this._right) {
-      _A.set(0, 1, 0);
-      _Q.setFromAxisAngle(_A, 2.0 * -Math.PI * deltaTime * this._acceleration.y);
-      _R.multiply(_Q);
+    if (this.right) {
+      A.set(0, 1, 0);
+      Q.setFromAxisAngle(A, 2.0 * -Math.PI * deltaTime * this.acceleration.y);
+      R.multiply(Q);
     }
 
-    controlObject.scene.quaternion.copy(_R);
+    controlObject.scene.quaternion.copy(R);
 
 
     const forward = new THREE.Vector3(0, 0, 1);
@@ -125,13 +125,13 @@ export class Movement implements IComponent {
     forward.multiplyScalar(velocity.z * deltaTime);
 
     const newPosition = new THREE.Vector3();
-    newPosition.copy(this._transform.position);
+    newPosition.copy(this.transform.position);
     newPosition.add(forward)
     newPosition.add(sideways)
 
-    if(this._collider && !this._collider.isColliding(newPosition)) {
-      this._transform.position.add(forward);
-      this._transform.position.add(sideways);
+    if(this.collider && !this.collider.isColliding(newPosition)) {
+      this.transform.position.add(forward);
+      this.transform.position.add(sideways);
     }
   }
 

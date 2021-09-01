@@ -11,11 +11,11 @@ import { Stats } from "./stats";
 export class AttackController implements IComponent {
     Entity: ObjectEntity;
     private stateMachine: FiniteStateMachine;
-    _primary: boolean;
+    primary: boolean;
     private grid: SpatialGridController;
 
     constructor() {
-        this._primary = false
+        this.primary = false
     }
     awake(): void {
         this.stateMachine = this.Entity.getComponent(FiniteStateMachine)
@@ -23,10 +23,10 @@ export class AttackController implements IComponent {
     }
 
     update(deltaTime: number): void {
-        if (this._primary) {
+        if (this.primary) {
             this.stateMachine.SetState('attack')
             this.primaryAttack()
-            this._primary = false
+            this.primary = false
         }
     }
 
@@ -44,7 +44,7 @@ export class AttackController implements IComponent {
             dirToTarget.normalize()
             
             const forward = new Vector3(0, 0, 1);
-            forward.applyQuaternion(this.Entity._target.scene.quaternion)
+            forward.applyQuaternion(this.Entity.target.scene.quaternion)
             forward.normalize();
             
             let damage = this.Entity.getComponent(Stats).strength

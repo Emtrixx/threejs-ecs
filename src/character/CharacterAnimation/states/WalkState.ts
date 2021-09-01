@@ -7,9 +7,9 @@ export class WalkState extends State {
     }
 
     enter(prevState) {
-        const curAction = this._parent._proxy._animations['walk'].action;
+        const curAction = this.parent.proxy.animations['walk'].action;
         if (prevState) {
-            const prevAction = this._parent._proxy._animations[prevState.name].action;
+            const prevAction = this.parent.proxy.animations[prevState.name].action;
             curAction.enabled = true;
 
             if (prevState.name == 'run') {
@@ -32,13 +32,13 @@ export class WalkState extends State {
     }
 
     update() {
-        const move = this._parent._movement
-        if (move._forward || move._backward) {
-            if (move._run) {
-                this._parent.SetState('run');
+        const move = this.parent.movement
+        if (move.forward || move.backward) {
+            if (move.run) {
+                this.parent.SetState('run');
             }
             return;
         }
-        this._parent.SetState('idle');
+        this.parent.SetState('idle');
     }
 };

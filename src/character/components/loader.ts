@@ -9,20 +9,20 @@ import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
 
 export class Loader implements IComponent {
     Entity: ObjectEntity;
-    private _modelFilepath: string;
-    private _animationFilepathArray: string[];
-    private _mixer: THREE.AnimationMixer;
-    private _manager: THREE.LoadingManager;
-    private _materialFilepath: string;
+    private modelFilepath: string;
+    private animationFilepathArray: string[];
+    private mixer: THREE.AnimationMixer;
+    private manager: THREE.LoadingManager;
+    private materialFilepath: string;
 
     constructor(modelFilepath: string, animationFilepathArray: Array<string> = [], material: string = "") {
-        this._modelFilepath = modelFilepath
-        this._animationFilepathArray = animationFilepathArray
-        this._materialFilepath = material;
+        this.modelFilepath = modelFilepath
+        this.animationFilepathArray = animationFilepathArray
+        this.materialFilepath = material;
     }
 
     awake(): void {
-        this._manager = this.Entity._params.manager
+        this.manager = this.Entity.params.manager
         this.loadModel()
     }
 
@@ -31,32 +31,32 @@ export class Loader implements IComponent {
     loadModel() {
         let re = /\.\w+/m
 
-        const path = this._modelFilepath.match(re)[0]
+        const path = this.modelFilepath.match(re)[0]
 
         if (path == '.gltf' || path == '.glb') {
-            this.gltfLoad(this._modelFilepath)
+            this.gltfLoad(this.modelFilepath)
         } else if (path == '.obj') {
-            if (this._materialFilepath.length > 1) {
+            if (this.materialFilepath.length > 1) {
                 this.objMaterialLoad()
             } else {
-                this.objLoad(this._modelFilepath)
+                this.objLoad(this.modelFilepath)
             }
         }
     }
 
     gltfLoad(filepath) {
-        const loader = new GLTFLoader(this._manager);
+        const loader = new GLTFLoader(this.manager);
         loader.load(filepath, (gltf) => {
             gltf.scene.traverse((c) => {
                 c.castShadow = true;
             });
-            this.Entity._target = gltf;
+            this.Entity.target = gltf;
             this.loadAnimations()
         },
             // called while loading is progressing
             xhr => {
 
-                this.Entity._params.loadingBar.update('character', xhr.loaded, xhr.total);
+                this.Entity.params.loadingBar.update('character', xhr.loaded, xhr.total);
 
             },
             // called when loading has errors
@@ -69,7 +69,7 @@ export class Loader implements IComponent {
     }
 
     objLoad(filepath) {
-        const loader = new OBJLoader(this._manager);
+        const loader = new OBJLoader(this.manager);
         loader.load(
             // resource URL
             filepath,
@@ -77,13 +77,13 @@ export class Loader implements IComponent {
                 //fit to gltf way of having everything on scene property
                 const loadedObject = { scene: null };
                 loadedObject.scene = object;
-                this.Entity._target = loadedObject;
+                this.Entity.target = loadedObject;
                 this.loadAnimations()
             },
             // called while loading is progressing
             xhr => {
 
-                this.Entity._params.loadingBar.update('character', xhr.loaded, xhr.total);
+                this.Entity.params.loadingBar.update('character', xhr.loaded, xhr.total);
 
             },
             // called when loading has errors
@@ -96,13 +96,13 @@ export class Loader implements IComponent {
     }
 
     objMaterialLoad() {
-        var mtlLoader = new MTLLoader(this._manager);
+        var mtlLoader = new MTLLoader(this.manager);
 
-        mtlLoader.load(this._materialFilepath, materials => {
+        mtlLoader.load(this.materialFilepath, materials => {
             materials.preload();
-            var objLoader = new OBJLoader(this._manager);
+            var objLoader = new OBJLoader(this.manager);
             objLoader.setMaterials(materials);
-            objLoader.load(this._modelFilepath, object => {
+            objLoader.load(this.modelFilepath, object => {
                 object.traverse((c: any) => {
                     c.castShadow = true;
                     if(c.material) {
@@ -117,13 +117,13 @@ export class Loader implements IComponent {
                 });
                 const loadedObject = { scene: null };
                 loadedObject.scene = object;
-                this.Entity._target = loadedObject;
+                this.Entity.target = loadedObject;
                 this.loadAnimations()
             },
             // called while loading is progressing
             xhr => {
 
-                this.Entity._params.loadingBar.update('character', xhr.loaded, xhr.total);
+                this.Entity.params.loadingBar.update('character', xhr.loaded, xhr.total);
 
             },
             // called when loading has errors
@@ -138,10 +138,10 @@ export class Loader implements IComponent {
     }
 
     loadAnimations(): void {
-        if (this._animationFilepathArray.length > 0) {
-            this.Entity.getComponent(FiniteStateMachine)._mixer = new THREE.AnimationMixer(this.Entity._target.scene);
-            this._mixer = this.Entity.getComponent(FiniteStateMachine)._mixer
-            for (const animationPath of this._animationFilepathArray) {
+        if (this.animationFilepathArray.length > 0) {
+            this.Entity.getComponent(FiniteStateMachine).mixer = new THREE.AnimationMixer(this.Entity.target.scene);
+            this.mixer = this.Entity.getComponent(FiniteStateMachine).mixer
+            for (const animationPath of this.animationFilepathArray) {
                 let re = /\.\w+$/m
                 if (animationPath.match(re)[0] == '.gltf' || animationPath.match(re)[0] == '.glb') {
                     this.gltfAnimationLoad(animationPath)
@@ -155,12 +155,12 @@ export class Loader implements IComponent {
     fbxAnimationLoad(animationPath: string): void {
         const nameReg = /(\w+)(?:\.fbx)/m
         const name = animationPath.match(nameReg)[1]
-        const loader = new FBXLoader(this._manager)
+        const loader = new FBXLoader(this.manager)
         loader.load(animationPath,
             animation => {
                 const clip = animation.animations[0];
-                const action = this._mixer.clipAction(clip);
-                this.Entity._animations[name] = {
+                const action = this.mixer.clipAction(clip);
+                this.Entity.animations[name] = {
                     clip,
                     action
                 }
@@ -170,12 +170,12 @@ export class Loader implements IComponent {
     gltfAnimationLoad(animationPath: string): void {
         const nameReg = /(\w+)(?:\.gl)/m
         const name = animationPath.match(nameReg)[1]
-        const loader = new GLTFLoader(this._manager)
+        const loader = new GLTFLoader(this.manager)
         loader.load(animationPath,
             animation => {
                 const clip = animation.animations[0];
-                const action = this._mixer.clipAction(clip);
-                this.Entity._animations[name] = {
+                const action = this.mixer.clipAction(clip);
+                this.Entity.animations[name] = {
                     clip,
                     action
                 }

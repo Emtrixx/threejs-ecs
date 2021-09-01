@@ -7,9 +7,9 @@ export class IdleState extends State {
     }
 
     enter(prevState) {
-        const idleAction = this._parent._proxy._animations['idle'].action;
+        const idleAction = this.parent.proxy.animations['idle'].action;
         if (prevState) {
-            const prevAction = this._parent._proxy._animations[prevState.name].action;
+            const prevAction = this.parent.proxy.animations[prevState.name].action;
             idleAction.time = 0.0;
             idleAction.enabled = true;
             idleAction.setEffectiveTimeScale(1.0);
@@ -25,13 +25,13 @@ export class IdleState extends State {
     }
 
     update() {
-        const move = this._parent._movement;
-        const attack = this._parent._attack
-        if (move._forward || move._backward) {
-            this._parent.SetState('walk');
+        const move = this.parent.movement;
+        const attack = this.parent.attack
+        if (move.forward || move.backward) {
+            this.parent.SetState('walk');
         } 
-        else if(attack._primary) {
-            this._parent.SetState('attack');
+        else if(attack.primary) {
+            this.parent.SetState('attack');
         }
     }
 };

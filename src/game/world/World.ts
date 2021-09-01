@@ -13,52 +13,52 @@ import { Transform } from "../../components/transform";
 
 export default class World extends Entity {
   public entities: Entity[] = [];
-  private _threejs: THREE.WebGLRenderer;
-  private _camera: THREE.PerspectiveCamera;
-  private _scene: THREE.Scene;
-  private _controls: BasicCharacterController;
-  private _stats: Stats;
-  private _zombie: Zombie;
-  private _loadingBar: LoadingBar;
-  _manager: THREE.LoadingManager;
-  private _grid: SpatialHashGrid;
-  private _decorativeModelsFilepaths: Array<string>;
+  private threejs: THREE.WebGLRenderer;
+  private camera: THREE.PerspectiveCamera;
+  private scene: THREE.Scene;
+  private controls: BasicCharacterController;
+  private stats: Stats;
+  private zombie: Zombie;
+  private loadingBar: LoadingBar;
+  manager: THREE.LoadingManager;
+  private grid: SpatialHashGrid;
+  private decorativeModelsFilepaths: Array<string>;
   //experimental
   planeActiveGrid: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshStandardMaterial>;
-  private _celPos: number[];
+  private celPos: number[];
 
   awake() {
     //Renderer
-    this._threejs = new THREE.WebGLRenderer({
+    this.threejs = new THREE.WebGLRenderer({
       antialias: true,
     });
-    this._threejs.shadowMap.enabled = true;
-    this._threejs.shadowMap.type = THREE.PCFSoftShadowMap;
-    this._threejs.setSize(window.innerWidth, window.innerHeight);
-    this._threejs.setPixelRatio(window.devicePixelRatio);
-    document.body.appendChild(this._threejs.domElement);
+    this.threejs.shadowMap.enabled = true;
+    this.threejs.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.threejs.setSize(window.innerWidth, window.innerHeight);
+    this.threejs.setPixelRatio(window.devicePixelRatio);
+    document.body.appendChild(this.threejs.domElement);
 
     window.addEventListener(
       "resize",
       () => {
-        this._OnWindowResize();
+        this.OnWindowResize();
       },
       false
     );
 
     //Scene
-    this._scene = new THREE.Scene();
-    this._scene.background = new THREE.Color(0x202020);
+    this.scene = new THREE.Scene();
+    this.scene.background = new THREE.Color(0x202020);
     var axesHelper = new THREE.AxesHelper(6);
-    this._scene.add(axesHelper);
+    this.scene.add(axesHelper);
 
     //Camera
     const fov = 60;
     const aspect = window.innerWidth / window.innerHeight;
     const near = 1.0;
     const far = 1000.0;
-    this._camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-    this._camera.position.set(75, 20, 0);
+    this.camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+    this.camera.position.set(75, 20, 0);
 
     //Light
     let light = new THREE.DirectionalLight(0xffffff, 1.0);
@@ -76,19 +76,19 @@ export default class World extends Entity {
     light.shadow.camera.right = -100;
     light.shadow.camera.top = 100;
     light.shadow.camera.bottom = -100;
-    this._scene.add(light);
+    this.scene.add(light);
 
     let ambientLight = new THREE.AmbientLight(0x101010);
     ambientLight.intensity = 4
-    this._scene.add(ambientLight);
+    this.scene.add(ambientLight);
 
     //Controls
-    const controls = new OrbitControls(this._camera, this._threejs.domElement);
+    const controls = new OrbitControls(this.camera, this.threejs.domElement);
     controls.target.set(0, 20, 0);
     controls.update();
 
-    this._stats = Stats();
-    document.body.appendChild(this._stats.domElement);
+    this.stats = Stats();
+    document.body.appendChild(this.stats.domElement);
 
     //Skybox
     // const tgaLoader = new TGALoader();
@@ -108,8 +108,8 @@ export default class World extends Entity {
     //   "./images/Meadow/negx.jpg",
     //   "./images/Meadow/posx.jpg",
     // ]);
-    // this._scene.background = texture;
-    this._scene.background = new THREE.Color(0x303050);
+    // this.scene.background = texture;
+    this.scene.background = new THREE.Color(0x303050);
 
     //Geometry
     const plane = new THREE.Mesh(
@@ -121,18 +121,18 @@ export default class World extends Entity {
     plane.castShadow = false;
     plane.receiveShadow = true;
     plane.rotation.x = -Math.PI / 2;
-    this._scene.add(plane);
+    this.scene.add(plane);
 
     //Grid
-    this._grid = new SpatialHashGrid(
+    this.grid = new SpatialHashGrid(
       [[-1000, -1000], [1000, 1000]], [100, 100]);
 
     //Loading Models
-    this._decorativeModelsFilepaths = decorativeObjectFilepaths()
-    this._loadingBar = new LoadingBar()
-    this._loadingBar.visible = false;
-    this._manager = new THREE.LoadingManager()
-    this._manager.onLoad = () => this.onLoad()
+    this.decorativeModelsFilepaths = decorativeObjectFilepaths()
+    this.loadingBar = new LoadingBar()
+    this.loadingBar.visible = false;
+    this.manager = new THREE.LoadingManager()
+    this.manager.onLoad = () => this.onLoad()
     this.load();
 
     for (const entity of this.entities) {
@@ -144,54 +144,54 @@ export default class World extends Entity {
     for (const entity of this.entities) {
       entity.update(deltaTime)
     }
-    this._stats.update();
-    this._threejs.render(this._scene, this._camera);
+    this.stats.update();
+    this.threejs.render(this.scene, this.camera);
     
     //experimental
-    const pos = this._controls.getComponent(Transform).position
+    const pos = this.controls.getComponent(Transform).position
     if(this.planeActiveGrid) {
-      this._celPos = this._grid.getCellPosition([pos.x, pos.z])
-      this.planeActiveGrid.position.set(this._celPos[0], pos.y + 5, this._celPos[1])
+      this.celPos = this.grid.getCellPosition([pos.x, pos.z])
+      this.planeActiveGrid.position.set(this.celPos[0], pos.y + 5, this.celPos[1])
     }
   }
 
   load() {
-    this._loadingBar.visible = true
-    this._LoadAnimatedModel();
-    this._LoadDecorativeObjects()
-    this._LoadZombies()
+    this.loadingBar.visible = true
+    this.LoadAnimatedModel();
+    this.LoadDecorativeObjects()
+    this.LoadZombies()
   }
   
   onLoad() {
     console.log('done');
-    this._loadingBar.visible = false;
+    this.loadingBar.visible = false;
     for (const entity of this.entities) {
       entity.onLoad()
     }
-    this._showActiveGrid()
+    this.showActiveGrid()
   }
 
-  _LoadAnimatedModel() {
+  LoadAnimatedModel() {
     const params = {
-      camera: this._camera,
-      scene: this._scene,
-      loadingBar: this._loadingBar,
-      manager: this._manager,
-      grid: this._grid
+      camera: this.camera,
+      scene: this.scene,
+      loadingBar: this.loadingBar,
+      manager: this.manager,
+      grid: this.grid
     };
-    this._controls = new BasicCharacterController(params);
-    this.entities.push(this._controls)
+    this.controls = new BasicCharacterController(params);
+    this.entities.push(this.controls)
   }
 
   
-  _LoadZombies() {
+  LoadZombies() {
     const params = {
-      camera: this._camera,
-      scene: this._scene,
-      loadingBar: this._loadingBar,
-      player: this._controls,
-      manager: this._manager,
-      grid: this._grid
+      camera: this.camera,
+      scene: this.scene,
+      loadingBar: this.loadingBar,
+      player: this.controls,
+      manager: this.manager,
+      grid: this.grid
     };
     for(let i = 0; i<8; i++) {
       const zombie = new Zombie(params);
@@ -200,15 +200,15 @@ export default class World extends Entity {
     }
   }
   
-  _LoadDecorativeObjects() {
+  LoadDecorativeObjects() {
     const params = {
-        camera: this._camera,
-        scene: this._scene,
-        loadingBar: this._loadingBar,
-        manager: this._manager,
-        grid: this._grid
+        camera: this.camera,
+        scene: this.scene,
+        loadingBar: this.loadingBar,
+        manager: this.manager,
+        grid: this.grid
       };
-      const list = this._decorativeModelsFilepaths;
+      const list = this.decorativeModelsFilepaths;
       for(let i = 0; i <  list.length; i += 2) {
         const fp = './models/decorativeObjects/'+list[i+1]
         const mp = './models/decorativeObjects/'+list[i]
@@ -218,18 +218,18 @@ export default class World extends Entity {
     }
     
     
-    _OnWindowResize() {
+    OnWindowResize() {
       // Update sizes
-      this._camera.aspect = window.innerWidth / window.innerHeight;
-      this._camera.updateProjectionMatrix();
-      this._threejs.setSize(window.innerWidth, window.innerHeight);
+      this.camera.aspect = window.innerWidth / window.innerHeight;
+      this.camera.updateProjectionMatrix();
+      this.threejs.setSize(window.innerWidth, window.innerHeight);
     }
     
 
     //experimental
     //shows a white plane for the current grid cell of the player
-    _showActiveGrid() {
-      const pos = this._controls.getComponent(Transform).position
+    showActiveGrid() {
+      const pos = this.controls.getComponent(Transform).position
       new THREE.PlaneGeometry(10,10,2,2)
       this.planeActiveGrid = new THREE.Mesh(
         new THREE.PlaneGeometry(20, 20, 10, 10),
@@ -239,11 +239,11 @@ export default class World extends Entity {
           opacity: 0.3
         })
       );
-      this._celPos = this._grid.getCellPosition([pos.x, pos.z])
-      this.planeActiveGrid.position.set(this._celPos[0], pos.y + 5, this._celPos[1])
+      this.celPos = this.grid.getCellPosition([pos.x, pos.z])
+      this.planeActiveGrid.position.set(this.celPos[0], pos.y + 5, this.celPos[1])
       this.planeActiveGrid.castShadow = false;
       this.planeActiveGrid.rotation.x = -Math.PI / 2;
-      this._scene.add(this.planeActiveGrid)
+      this.scene.add(this.planeActiveGrid)
     }
   }
   

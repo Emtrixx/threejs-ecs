@@ -6,26 +6,26 @@ import IComponent from "../../utils/ecs/IComponent";
 
 export class Collider implements IComponent {
     Entity: Entity;
-    private _grid: SpatialGridController;
-    private _radius: number;
-    private _transform: Transform;
+    private grid: SpatialGridController;
+    private radius: number;
+    private transform: Transform;
     collision: boolean = false;
-    private _nearestPosition: Vector3
+    private nearestPosition: Vector3
 
     constructor(radius: number) {
-        this._radius = radius;
-        this._nearestPosition = new Vector3()
+        this.radius = radius;
+        this.nearestPosition = new Vector3()
     }
     
     awake(): void {
-        this._grid = this.Entity.getComponent(SpatialGridController)
-        this._transform = this.Entity.getComponent(Transform)
+        this.grid = this.Entity.getComponent(SpatialGridController)
+        this.transform = this.Entity.getComponent(Transform)
     }
     update(deltaTime: number): void {
-        // const near = this._grid.FindNearbyEntities(this._radius + 2)
+        // const near = this.grid.FindNearbyEntities(this.radius + 2)
         // for(const entity of near) {
-        //     this._nearestPosition.set(entity.position[0], 0, entity.position[1])
-        //     if(this._transform.position.distanceTo(this._nearestPosition) < this._radius) {
+        //     this.nearestPosition.set(entity.position[0], 0, entity.position[1])
+        //     if(this.transform.position.distanceTo(this.nearestPosition) < this.radius) {
         //         this.collision = true;
         //     } else {
         //         this.collision = false
@@ -34,10 +34,10 @@ export class Collider implements IComponent {
     }
     
     isColliding(position): boolean {
-        const near = this._grid.FindNearbyEntities(this._radius + 10)
+        const near = this.grid.FindNearbyEntities(this.radius + 10)
         for(const entity of near) {
-            this._nearestPosition.set(entity.position[0], 0, entity.position[1])
-            if(position.distanceTo(this._nearestPosition) < this._radius) {
+            this.nearestPosition.set(entity.position[0], 0, entity.position[1])
+            if(position.distanceTo(this.nearestPosition) < this.radius) {
                 return true;
             } 
         }

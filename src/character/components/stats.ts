@@ -1,3 +1,4 @@
+import { SpatialGridController } from "../../game/world/components/SpatialHashGridController";
 import Entity from "../../utils/ecs/Entity";
 import IComponent from "../../utils/ecs/IComponent";
 import FiniteStateMachine from "../CharacterAnimation/FiniteStateMachine";
@@ -27,9 +28,10 @@ export class Stats implements IComponent {
         this.health = Math.max(0, this.health - damage)
         if(this.health == 0) {
             console.log('Dead')
+            this.Entity.getComponent(SpatialGridController).removeFromGrid()
+            this.Entity.removeComponent(SpatialGridController)
             this.Entity.removeComponent(Movement)
             this.Entity.removeComponent(ZombieInput)
-            this.Entity.removeComponent(Collider)
             this.Entity.getComponent(FiniteStateMachine).SetState('death')
         }
     }

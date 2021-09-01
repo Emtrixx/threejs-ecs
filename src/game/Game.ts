@@ -3,7 +3,7 @@ import { Settings } from "../settings/settings";
 import World from "./world/World";
 
 export class Game extends Entity {
-    private _lastTimestamp: number;
+    private lastTimestamp: number;
     public entities: Entity[] = [];
 
     public awake(): void {
@@ -16,14 +16,14 @@ export class Game extends Entity {
         }
 
         window.requestAnimationFrame(() => {
-            this._lastTimestamp = Date.now()
+            this.lastTimestamp = Date.now()
             
             this.update()
         })
     }
 
     public update(): void {
-        const deltaTime = (Date.now() - this._lastTimestamp) / 1000
+        const deltaTime = (Date.now() - this.lastTimestamp) / 1000
 
         //Update components
         super.update(deltaTime)
@@ -33,7 +33,7 @@ export class Game extends Entity {
             entity.update(deltaTime)
           }
 
-        this._lastTimestamp = Date.now()
+        this.lastTimestamp = Date.now()
         
         window.requestAnimationFrame(() => this.update())
     }

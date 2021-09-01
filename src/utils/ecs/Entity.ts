@@ -2,20 +2,18 @@ import IComponent from "./IComponent";
 import { IUpdate, IAwake, IonLoad } from "../lifecycle/Ilifecylce";
 
 export default abstract class Entity implements IAwake, IUpdate, IonLoad {
-  // protected _name: String;
-  // protected _id: String;
-  protected _components: Array<IComponent> = [];
+  // protected name: String;
+  // protected id: String;
+  public components: Array<IComponent> = [];
 
-  public get components(): Array<IComponent> {
-    return this._components;
-  }
+
 
   // create(name: String) {
-  //   this._name = name;
+  //   this.name = name;
   // }
 
   public addComponent(component: IComponent): void {
-    this._components.push(component);
+    this.components.push(component);
     component.Entity = this;
   }
 
@@ -23,8 +21,8 @@ export default abstract class Entity implements IAwake, IUpdate, IonLoad {
     let toRemove: IComponent | undefined;
     let index: number | undefined;
 
-    for (let i = 0; i < this._components.length; i++) {
-      const component = this._components[i];
+    for (let i = 0; i < this.components.length; i++) {
+      const component = this.components[i];
       if (component instanceof constr) {
         toRemove = component;
         index = i;
@@ -34,13 +32,13 @@ export default abstract class Entity implements IAwake, IUpdate, IonLoad {
 
     if (toRemove && index) {
       toRemove.Entity = null;
-      this._components.splice(index, 1);
+      this.components.splice(index, 1);
     }
   }
 
   public getComponent<C extends IComponent>(constr: { new(...args: any[]): C }): C {
     // --- ADD --- //
-    for (const component of this._components) {
+    for (const component of this.components) {
       if (component instanceof constr) {
         return component as C;
       }
@@ -52,7 +50,7 @@ export default abstract class Entity implements IAwake, IUpdate, IonLoad {
   }
 
   public hasComponent<C extends IComponent>(constr: { new(...args: any[]): C }): boolean {
-    for (const component of this._components) {
+    for (const component of this.components) {
       if (component instanceof constr) {
         return true
       }
@@ -62,7 +60,7 @@ export default abstract class Entity implements IAwake, IUpdate, IonLoad {
   }
   
   public awake() {
-    for(const component of this._components){
+    for(const component of this.components){
       component.awake()
     }
   }
@@ -70,7 +68,7 @@ export default abstract class Entity implements IAwake, IUpdate, IonLoad {
   onLoad(): void {}
 
   public update(deltaTime: number): void {
-    for(const component of this._components) {
+    for(const component of this.components) {
       component.update(deltaTime)
     }
   }

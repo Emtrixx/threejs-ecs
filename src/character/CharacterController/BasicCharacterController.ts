@@ -17,7 +17,7 @@ export default class BasicCharacterController extends ObjectEntity {
     constructor(params) {
       super()
       this.name = 'player'
-      this._params = params;
+      this.params = params;
   
       const decceleration = new THREE.Vector3(-0.0005, -0.0001, -5.0);
       decceleration.multiplyScalar(4)
@@ -30,28 +30,28 @@ export default class BasicCharacterController extends ObjectEntity {
       this.addComponent(new Loader(p+'player.glb', [p+'idle.glb', p+'walk.glb', p+'run.glb', p+'attack.glb', p+'death.glb']))
       this.addComponent(new BasicCharacterControllerInput());
       this.addComponent(new Movement(decceleration, acceleration, velocity))
-      this.addComponent(new SpatialGridController({grid: this._params.grid}))
+      this.addComponent(new SpatialGridController({grid: this.params.grid}))
 
       this.addComponent(new Stats(100, 25))
       this.addComponent(new AttackController())
     }
     
     awake() {
-      this.addComponent(new CharacterFSM(new BasicCharacterControllerProxy(this._animations)))
+      this.addComponent(new CharacterFSM(new BasicCharacterControllerProxy(this.animations)))
       this.addComponent(new Collider(3))
       super.awake()
     }
     
     update(deltaTime) {
-      if (!this._target) {
+      if (!this.target) {
         return;
       }
       super.update(deltaTime)
     }
     
     onLoad() {
-      this._target.scene.scale.set(4,4,4)
-      this._params.scene.add(this._target.scene);
+      this.target.scene.scale.set(4,4,4)
+      this.params.scene.add(this.target.scene);
       this.getComponent(CharacterFSM).SetState('idle')
     }
   }
