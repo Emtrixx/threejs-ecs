@@ -10,6 +10,7 @@ import { SpatialGridController } from "../../game/world/components/SpatialHashGr
 import { Collider } from "../components/collider";
 import { AttackController } from "../components/attackController";
 import { Stats } from "../components/stats";
+import { ThirdPersonCamera } from "../ThirdPersonCamera";
 
 
 export default class BasicCharacterController extends ObjectEntity {
@@ -31,7 +32,6 @@ export default class BasicCharacterController extends ObjectEntity {
       this.addComponent(new BasicCharacterControllerInput());
       this.addComponent(new Movement(decceleration, acceleration, velocity))
       this.addComponent(new SpatialGridController({grid: this.params.grid}))
-
       this.addComponent(new Stats(100, 40))
       this.addComponent(new AttackController())
     }
@@ -53,5 +53,6 @@ export default class BasicCharacterController extends ObjectEntity {
       this.target.scene.scale.set(4,4,4)
       this.params.scene.add(this.target.scene);
       this.getComponent(CharacterFSM).SetState('idle')
+      this.addComponent(new ThirdPersonCamera(this.params.camera))
     }
   }

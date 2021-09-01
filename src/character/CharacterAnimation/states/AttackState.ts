@@ -17,7 +17,6 @@ export class AttackState extends State {
    
     enter(prevState: State) {
       this.action = this.parent.proxy.animations['attack'].action;
-      this.action.setDuration(0.2)
       console.log(this.action);
       const mixer = this.action.getMixer();
       mixer.addEventListener('finished', this.FinishedCallback);
@@ -29,8 +28,10 @@ export class AttackState extends State {
         this.action.setLoop(THREE.LoopOnce, 1);
         this.action.clampWhenFinished = true;
         this.action.crossFadeFrom(prevAction, 0.2, true);
+        this.action.timeScale = 1.5
         this.action.play();
       } else {
+        this.action.timeScale = 1.5
         this.action.play();
       }
     }

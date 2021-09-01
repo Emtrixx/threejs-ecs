@@ -27,6 +27,7 @@ export class IdleState extends State {
     update() {
         const move = this.parent.movement;
         const attack = this.parent.attack
+
         if (move.forward || move.backward) {
             this.parent.SetState('walk');
         } 

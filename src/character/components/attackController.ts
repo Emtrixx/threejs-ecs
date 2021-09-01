@@ -13,6 +13,7 @@ export class AttackController implements IComponent {
     private stateMachine: FiniteStateMachine;
     primary: boolean;
     private grid: SpatialGridController;
+    stats: Stats;
 
     constructor() {
         this.primary = false
@@ -20,13 +21,14 @@ export class AttackController implements IComponent {
     awake(): void {
         this.stateMachine = this.Entity.getComponent(FiniteStateMachine)
         this.grid = this.Entity.getComponent(SpatialGridController)
+        this.stats = this.Entity.getComponent(Stats)
     }
 
     update(deltaTime: number): void {
-        if (this.primary) {
+        if (this.primary && this.stats.isAlive()) {
             this.stateMachine.SetState('attack')
-            this.primaryAttack()
             this.primary = false
+            setTimeout(() => this.primaryAttack(), 150)
         }
     }
 
@@ -35,6 +37,7 @@ export class AttackController implements IComponent {
         const attackable = near.filter(e => {
             return e.entity.hasComponent(Stats)
         })
+
 
         for(const a of attackable) {
             const target = a.entity

@@ -3,6 +3,7 @@ import IComponent from "../../utils/ecs/IComponent";
 import FiniteStateMachine from "../CharacterAnimation/FiniteStateMachine";
 import { AttackController } from "../components/attackController";
 import { Movement } from "../components/movement-component";
+import { Stats } from "../components/stats";
 
 export default class BasicCharacterControllerInput implements IComponent {
   Entity: ObjectEntity;
@@ -10,6 +11,7 @@ export default class BasicCharacterControllerInput implements IComponent {
   protected movement: Movement;
   protected attack: AttackController;
   protected stateMachine: FiniteStateMachine;
+  stats: Stats;
 
   update(_): void {
     //TODO
@@ -22,6 +24,12 @@ export default class BasicCharacterControllerInput implements IComponent {
     document.addEventListener("keydown", (e) => this.onKeyDown(e), false);
     document.addEventListener("keyup", (e) => this.onKeyUp(e), false);
   }
+
+  // onDeath() {
+  //   document.removeEventListener("keydown", (e) => this.onKeyDown(e));
+  //   document.removeEventListener("keyup", (e) => this.onKeyUp(e));
+  //   console.log('asdasda');
+  // }
 
   onKeyDown(e: KeyboardEvent): any {
     switch (e.code) {

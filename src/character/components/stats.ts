@@ -23,6 +23,7 @@ export class Stats implements IComponent {
     }
 
     isAlive(): boolean {
+        console.log(this.health);
         return this.health > 0
     }
 
@@ -35,7 +36,7 @@ export class Stats implements IComponent {
             this.Entity.removeComponent(Movement)
             this.Entity.removeComponent(ZombieInput)
             this.Entity.removeComponent(BasicCharacterControllerInput)
-            this.Entity.getComponent(FiniteStateMachine).SetState('death')
+            this.Entity.getComponent(FiniteStateMachine).SetState('death') 
         }
     }
 

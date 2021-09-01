@@ -2,6 +2,7 @@ import Entity from "../../utils/ecs/Entity";
 import IComponent from "../../utils/ecs/IComponent";
 import { AttackController } from "../components/attackController";
 import { Movement } from "../components/movement-component";
+import { Stats } from "../components/stats";
 import { AttackState } from "./states/AttackState";
 import { DeathState } from "./states/DeathState";
 import { IdleState } from "./states/IdleState";

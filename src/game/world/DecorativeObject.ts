@@ -1,5 +1,3 @@
-import * as THREE from "three";
-import { Vector3 } from "three";
 import { Collider } from "../../character/components/collider";
 import { Loader } from "../../character/components/loader";
 import { Transform } from "../../components/transform";

@@ -1,11 +1,8 @@
-import * as THREE from "three";
 import { Vector3 } from "three";
-import { Transform } from "../../components/transform";
 import { ObjectEntity } from "../../entities/ObjectEntity";
 import { SpatialGridController } from "../../game/world/components/SpatialHashGridController";
 import IComponent from "../../utils/ecs/IComponent";
 import FiniteStateMachine from "../CharacterAnimation/FiniteStateMachine";
-import BasicCharacterController from "../CharacterController/BasicCharacterController";
 import { AttackController } from "../components/attackController";
 import { Input } from "../components/input";
 import { Movement } from "../components/movement-component";
@@ -31,7 +28,7 @@ export class ZombieInput implements IComponent {
     }
     
     update(deltaTime): void {
-        if(!this.Entity.target) {
+        if(!this.Entity.target && !this.stateMachine.currentState) {
             return
         }
         this.counter = (this.counter + deltaTime) % 10 
