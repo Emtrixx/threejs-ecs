@@ -1,12 +1,15 @@
-import Entity from "../../utils/ecs/Entity";
+import { ObjectEntity } from "../../entities/ObjectEntity";
 import IComponent from "../../utils/ecs/IComponent";
+import FiniteStateMachine from "../CharacterAnimation/FiniteStateMachine";
 import { AttackController } from "../components/attackController";
 import { Movement } from "../components/movement-component";
 
 export default class BasicCharacterControllerInput implements IComponent {
-  Entity: Entity;
-  private movement: Movement;
-  private attack: AttackController;
+  Entity: ObjectEntity;
+
+  protected movement: Movement;
+  protected attack: AttackController;
+  protected stateMachine: FiniteStateMachine;
 
   update(_): void {
     //TODO
@@ -15,6 +18,7 @@ export default class BasicCharacterControllerInput implements IComponent {
   awake() {
     this.movement = this.Entity.getComponent(Movement)
     this.attack = this.Entity.getComponent(AttackController)
+    this.stateMachine = this.Entity.getComponent(FiniteStateMachine)
     document.addEventListener("keydown", (e) => this.onKeyDown(e), false);
     document.addEventListener("keyup", (e) => this.onKeyUp(e), false);
   }
@@ -40,7 +44,9 @@ export default class BasicCharacterControllerInput implements IComponent {
         this.movement.run = true;
         break;
       case "KeyC":
-        this.attack.primary = true;
+        if(this.stateMachine.currentState.name != 'attack') {
+          this.attack.primary = true;
+        }
         break;
     }
   }

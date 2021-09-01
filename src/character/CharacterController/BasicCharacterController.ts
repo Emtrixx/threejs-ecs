@@ -32,7 +32,7 @@ export default class BasicCharacterController extends ObjectEntity {
       this.addComponent(new Movement(decceleration, acceleration, velocity))
       this.addComponent(new SpatialGridController({grid: this.params.grid}))
 
-      this.addComponent(new Stats(100, 25))
+      this.addComponent(new Stats(100, 40))
       this.addComponent(new AttackController())
     }
     

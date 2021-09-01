@@ -2,8 +2,10 @@ import { SpatialGridController } from "../../game/world/components/SpatialHashGr
 import Entity from "../../utils/ecs/Entity";
 import IComponent from "../../utils/ecs/IComponent";
 import FiniteStateMachine from "../CharacterAnimation/FiniteStateMachine";
+import BasicCharacterControllerInput from "../CharacterController/BasicCharacterControllerInput";
 import { ZombieInput } from "../Zombie/ZombieInput";
 import { Collider } from "./collider";
+import { Input } from "./input";
 import { Movement } from "./movement-component";
 
 export class Stats implements IComponent {
@@ -32,6 +34,7 @@ export class Stats implements IComponent {
             this.Entity.removeComponent(SpatialGridController)
             this.Entity.removeComponent(Movement)
             this.Entity.removeComponent(ZombieInput)
+            this.Entity.removeComponent(BasicCharacterControllerInput)
             this.Entity.getComponent(FiniteStateMachine).SetState('death')
         }
     }

@@ -160,6 +160,7 @@ export class Loader implements IComponent {
             animation => {
                 const clip = animation.animations[0];
                 const action = this.mixer.clipAction(clip);
+                action.timeScale = 0.2 
                 this.Entity.animations[name] = {
                     clip,
                     action

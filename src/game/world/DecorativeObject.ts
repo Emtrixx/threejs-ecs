@@ -42,12 +42,13 @@ export class DecorativeObject extends ObjectEntity{
         this.params.scene.add(this.target.scene);
     }
 
-    spawnpoint(): Vector3 {
-        const x = Math.random() * 30
-        const y = 1
-        const z = Math.random() * 30
+    // spawnpoint(): Vector3 {
+    //     const x = Math.random() * 60 - 30
+    //     const y = 1
+    //     const z = Math.random() * 60 - 30
         
-        const position = new THREE.Vector3(x,y,z)
-        return position
-      }
+    //     const position = new THREE.Vector3(x,y,z)
+    //     console.log(position);
+    //     return position
+    //   }
 }

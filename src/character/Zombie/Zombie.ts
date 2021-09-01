@@ -31,7 +31,7 @@ export class Zombie extends ObjectEntity {
     this.addComponent(new Movement(decceleration, acceleration, velocity))
     this.addComponent(new ZombieInput)
     this.addComponent(new SpatialGridController({grid: this.params.grid}))
-    this.addComponent(new Stats(100, 100))
+    this.addComponent(new Stats(80, 20))
     this.addComponent(new Collider(3))
     this.addComponent(new AttackController())
     this.addComponent(new ZombieFSM(new BasicCharacterControllerProxy(this.animations)))
@@ -52,9 +52,9 @@ export class Zombie extends ObjectEntity {
   }
 
   spawnpoint(): Vector3 {
-    const x = Math.random() * 80
+    const x = (Math.random() * 2 - 1) * 80
     const y = 0
-    const z = Math.random() * 80
+    const z = (Math.random() * 2 - 1) * 80
     
     const position = new THREE.Vector3(x,y,z)
     return position

@@ -8,17 +8,17 @@ import { Collider } from "./collider";
 export class Movement implements IComponent {
   Entity: ObjectEntity;
   private transform: Transform;
+  private stateMachine: FiniteStateMachine;
+  private collider: Collider;
   private decceleration: THREE.Vector3;
   private acceleration: THREE.Vector3;
   private velocity: THREE.Vector3;
-  private collider: Collider;
   run: boolean;
   jump: boolean;
   forward: boolean;
   backward: boolean;
   left: boolean;
   right: boolean;
-  private stateMachine: FiniteStateMachine;
 
   constructor(decelleration, acceleration, velocity) {
     this.decceleration = decelleration;

@@ -34,7 +34,7 @@ export class Collider implements IComponent {
     }
     
     isColliding(position): boolean {
-        const near = this.grid.FindNearbyEntities(this.radius + 10)
+        const near = this.grid.FindNearbyEntities(this.radius + 5)
         for(const entity of near) {
             this.nearestPosition.set(entity.position[0], 0, entity.position[1])
             if(position.distanceTo(this.nearestPosition) < this.radius) {
