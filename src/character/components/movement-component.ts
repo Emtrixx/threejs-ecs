@@ -38,7 +38,6 @@ export class Movement implements IComponent {
 
   update(deltaTime: number): void {
     const acc = this.acceleration.clone();
-    const collision = this.collider && this.collider.collision
 
     // Old Collision Handling
     // if (this.collider && this.collider.collision) {

@@ -23,7 +23,6 @@ export class Stats implements IComponent {
     }
 
     isAlive(): boolean {
-        console.log(this.health);
         return this.health > 0
     }
 

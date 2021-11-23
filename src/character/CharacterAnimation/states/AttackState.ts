@@ -17,7 +17,6 @@ export class AttackState extends State {
    
     enter(prevState: State) {
       this.action = this.parent.proxy.animations['attack'].action;
-      console.log(this.action);
       const mixer = this.action.getMixer();
       mixer.addEventListener('finished', this.FinishedCallback);
       

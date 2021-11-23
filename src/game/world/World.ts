@@ -209,9 +209,9 @@ export default class World extends Entity {
         grid: this.grid
       };
       const list = this.decorativeModelsFilepaths;
-      for(let i = 0; i <  list.length; i += 2) {
-        const fp = './models/decorativeObjects/'+list[i+1]
-        const mp = './models/decorativeObjects/'+list[i]
+      for(let i = 0; i <  list.length; i++) {
+        const fp = './models/decorativeObjects/'+list[i] +'.obj'
+        const mp = './models/decorativeObjects/'+list[i] +'.mtl'
         const model = new DecorativeObject(params, fp, mp);
         this.entities.push(model)
       }

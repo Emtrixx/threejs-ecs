@@ -1,11 +1,13 @@
+import { Movement } from "../../components/movement-component";
 import { State } from "./State";
 
 export class RunState extends State {
-
+    move: Movement;
 
     constructor(parent) {
         super(parent);
         this.name = 'run'
+        this.move = parent.movement;
     }
 
     enter(prevState) {
@@ -35,9 +37,8 @@ export class RunState extends State {
     }
 
     update() {
-        const move = this.parent.movement
-        if (move.forward || move.backward) {
-            if (!move.run) {
+        if (this.move.forward || this.move.backward) {
+            if (!this.move.run) {
                 this.parent.SetState('walk');
             }
             return;

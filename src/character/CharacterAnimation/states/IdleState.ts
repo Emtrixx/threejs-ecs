@@ -1,9 +1,15 @@
+import { AttackController } from "../../components/attackController";
+import { Movement } from "../../components/movement-component";
 import { State } from "./State";
 
 export class IdleState extends State {
+    move: Movement;
+    attack: AttackController;
     constructor(parent) {
         super(parent);
         this.name = 'idle'
+        this.move = parent.movement;
+        this.attack = parent.attack;
     }
 
     enter(prevState) {
@@ -25,13 +31,10 @@ export class IdleState extends State {
     }
 
     update() {
-        const move = this.parent.movement;
-        const attack = this.parent.attack
-
-        if (move.forward || move.backward) {
+        if (this.move.forward || this.move.backward) {
             this.parent.SetState('walk');
         } 
-        else if(attack.primary) {
+        else if(this.attack.primary) {
             this.parent.SetState('attack');
         }
     }

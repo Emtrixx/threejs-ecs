@@ -16,6 +16,7 @@ export class ZombieInput implements IComponent {
     private grid: SpatialGridController;
     private counter: number;
     private rand: number;
+    controlObject: any;
 
     
     awake(): void {
@@ -31,17 +32,19 @@ export class ZombieInput implements IComponent {
         if(!this.Entity.target && !this.stateMachine.currentState) {
             return
         }
+        if(deltaTime < 3) {
+            this.controlObject = this.Entity.target.scene;
+        }
         this.counter = (this.counter + deltaTime) % 10 
 
         //Should be under transform but threejs lookAt function does the job
-        const controlObject = this.Entity.target.scene;
 
         const near: Array<any> = this.grid.FindNearbyEntities(30)
         for(let i = 0; i<near.length; i++) {
            if(near[i].entity.name == 'player') {
                 const pos = new Vector3(near[i].position[0], 0, near[i].position[1])
-                controlObject.lookAt(pos)
-                if(controlObject.position.distanceTo(pos) < 4 && this.stateMachine.currentState.name != 'attack') {
+                this.controlObject.lookAt(pos)
+                if(this.controlObject.position.distanceTo(pos) < 4 && this.stateMachine.currentState.name != 'attack') {
                     this.movement.forward = true;
                     this.attack.primary = true;
                     return
