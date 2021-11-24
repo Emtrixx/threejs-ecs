@@ -26,6 +26,7 @@ export default class World extends Entity {
   //experimental
   planeActiveGrid: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshStandardMaterial>;
   private celPos: number[];
+  light: THREE.DirectionalLight;
 
   awake() {
     //Renderer
@@ -61,22 +62,23 @@ export default class World extends Entity {
     this.camera.position.set(75, 20, 0);
 
     //Light
-    let light = new THREE.DirectionalLight(0xffffff, 1.0);
-    light.position.set(20, 100, 10);
-    light.target.position.set(0, 0, 0);
-    light.castShadow = true;
-    light.shadow.bias = -0.001;
-    light.shadow.mapSize.width = 4096;
-    light.shadow.mapSize.height = 4096;
-    light.shadow.camera.near = 0.1;
-    light.shadow.camera.far = 500.0;
-    light.shadow.camera.near = 0.5;
-    light.shadow.camera.far = 500.0;
-    light.shadow.camera.left = 100;
-    light.shadow.camera.right = -100;
-    light.shadow.camera.top = 100;
-    light.shadow.camera.bottom = -100;
-    this.scene.add(light);
+    this.light = new THREE.DirectionalLight(0xffffff, 1.0);
+    this.light.position.set(20, 100, 10);
+    this.light.target.position.set(0, 0, 0);
+    this.light.castShadow = true;
+    this.light.shadow.bias = -0.001;
+    this.light.shadow.mapSize.width = 4096;
+    this.light.shadow.mapSize.height = 4096;
+    this.light.shadow.camera.near = 0.1;
+    this.light.shadow.camera.far = 500.0;
+    this.light.shadow.camera.near = 0.5;
+    this.light.shadow.camera.far = 500.0;
+    this.light.shadow.camera.left = 100;
+    this.light.shadow.camera.right = -100;
+    this.light.shadow.camera.top = 100;
+    this.light.shadow.camera.bottom = -100;
+    this.scene.add(this.light);
+    this.scene.add(this.light.target);
 
     let ambientLight = new THREE.AmbientLight(0x101010);
     ambientLight.intensity = 4
@@ -174,6 +176,7 @@ export default class World extends Entity {
   LoadAnimatedModel() {
     const params = {
       camera: this.camera,
+      light: this.light,
       scene: this.scene,
       loadingBar: this.loadingBar,
       manager: this.manager,

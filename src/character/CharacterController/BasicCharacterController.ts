@@ -11,6 +11,7 @@ import { Collider } from "../components/collider";
 import { AttackController } from "../components/attackController";
 import { Stats } from "../components/stats";
 import { ThirdPersonCamera } from "../ThirdPersonCamera";
+import { LightController } from "../components/lightController";
 
 
 export default class BasicCharacterController extends ObjectEntity {
@@ -23,7 +24,7 @@ export default class BasicCharacterController extends ObjectEntity {
       const decceleration = new THREE.Vector3(-0.0005, -0.0001, -5.0);
       decceleration.multiplyScalar(4)
       const acceleration = new THREE.Vector3(1, 0.25, 50.0);
-      acceleration.multiplyScalar(3)
+      acceleration.multiplyScalar(4)
       const velocity = new THREE.Vector3(0, 0, 0);
 
       this.addComponent(new Transform())
@@ -37,6 +38,8 @@ export default class BasicCharacterController extends ObjectEntity {
     }
     
     awake() {
+      console.log(this.params.scene);
+      this.addComponent(new LightController(this.params.light));
       this.addComponent(new CharacterFSM(new BasicCharacterControllerProxy(this.animations)))
       this.addComponent(new Collider(3))
       super.awake()
@@ -47,6 +50,7 @@ export default class BasicCharacterController extends ObjectEntity {
         return;
       }
       super.update(deltaTime)
+
     }
     
     onLoad() {

@@ -26,7 +26,7 @@ export class AttackState extends State {
         this.action.reset();  
         this.action.setLoop(THREE.LoopOnce, 1);
         this.action.clampWhenFinished = true;
-        this.action.crossFadeFrom(prevAction, 0.2, true);
+        this.action.crossFadeFrom(prevAction, 0.1, true);
         this.action.timeScale = 1.5
         this.action.play();
       } else {

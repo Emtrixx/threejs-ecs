@@ -44,7 +44,7 @@ export class ZombieInput implements IComponent {
            if(near[i].entity.name == 'player') {
                 const pos = new Vector3(near[i].position[0], 0, near[i].position[1])
                 this.controlObject.lookAt(pos)
-                if(this.controlObject.position.distanceTo(pos) < 4 && this.stateMachine.currentState.name != 'attack') {
+                if(this.controlObject.position.distanceTo(pos) < 4 && this.stateMachine.currentState && this.stateMachine.currentState.name != 'attack') {
                     this.movement.forward = true;
                     this.attack.primary = true;
                     return
