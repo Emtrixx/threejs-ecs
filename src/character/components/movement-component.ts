@@ -4,7 +4,7 @@ import { Transform } from "../../components/transform";
 import { ObjectEntity } from "../../entities/ObjectEntity";
 import IComponent from "../../utils/ecs/IComponent";
 import FiniteStateMachine from "../CharacterAnimation/FiniteStateMachine";
-import { Collider } from "../../components/collider";
+import { Collider } from "../../components/collider/collider";
 export class Movement implements IComponent {
   Entity: ObjectEntity;
   private transform: Transform;
@@ -45,11 +45,19 @@ export class Movement implements IComponent {
       this.nonPhysicsMovement(deltaTime);
     }
   }
+
+  activatePhysics() {
+    this.physics = true;
+    this.collider = this.Entity.getComponent(Collider);
+    this.transform.activatePhysics();
+  }
   
   physicsMovement(deltaTime: number) {
     const acc = this.acceleration.clone();
 
     const velocity = this.velocity;
+
+    // TODO replace with cannon friction on floor
     const frameDecceleration = new THREE.Vector3(
       velocity.x * this.decceleration.x,
       velocity.y * this.decceleration.y,
@@ -62,7 +70,8 @@ export class Movement implements IComponent {
       Math.min(Math.abs(frameDecceleration.z), Math.abs(velocity.z));
 
     velocity.add(frameDecceleration);
-
+    // end TODO
+    
     const controlObject = this.Entity.target;
 
     const Q = new THREE.Quaternion();
@@ -96,19 +105,23 @@ export class Movement implements IComponent {
     }
 
     controlObject.scene.quaternion.copy(R);
+    this.collider.body.quaternion.copy(R);
+    // console.log(this.collider.body.quaternion)
+    // console.log(controlObject.scene.quaternion)
 
     const forward = new THREE.Vector3(0, 0, 1);
-    forward.applyQuaternion(controlObject.scene.quaternion);
+    forward.applyQuaternion(R);
     forward.normalize();
 
     const sideways = new THREE.Vector3(1, 0, 0);
-    sideways.applyQuaternion(controlObject.scene.quaternion);
+    sideways.applyQuaternion(R);
     sideways.normalize();
 
-    sideways.multiplyScalar(velocity.x * deltaTime);
-    forward.multiplyScalar(velocity.z * deltaTime);
+    sideways.multiplyScalar(velocity.x * deltaTime * 140);
+    forward.multiplyScalar(velocity.z * deltaTime * 140);
+    sideways.add(forward);
 
-    this.collider.body.velocity = new CANNON.Vec3(sideways.x, this.collider.body.velocity.y, forward.z);
+    this.collider.body.velocity.copy(new CANNON.Vec3(sideways.x, 0, sideways.z));
   }
   
   nonPhysicsMovement(deltaTime: number) {

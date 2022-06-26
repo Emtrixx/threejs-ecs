@@ -11,6 +11,7 @@ import { DecorativeObject } from "./DecorativeObject";
 import { decorativeObjectFilepaths } from "../../settings/DecorativeFilepaths";
 import { Transform } from "../../components/transform";
 import * as CANNON from 'cannon-es';
+import Ball from "../other/Ball";
 
 export default class World extends Entity {
   public entities: Entity[] = [];
@@ -29,6 +30,8 @@ export default class World extends Entity {
   private celPos: number[];
   light: THREE.DirectionalLight;
   private pworld: CANNON.World;
+  debugBody: CANNON.Body;
+  debugBall: THREE.Mesh;
 
   awake() {
     //Renderer
@@ -54,6 +57,18 @@ export default class World extends Entity {
     this.scene.background = new THREE.Color(0x202020);
     var axesHelper = new THREE.AxesHelper(6);
     this.scene.add(axesHelper);
+
+    // Physics
+    this.pworld = new CANNON.World({
+      gravity: new CANNON.Vec3(0, -9.82, 0),
+    })
+      // Create a static plane for the ground
+    const groundBody = new CANNON.Body({
+      type: CANNON.Body.STATIC, // can also be achieved by setting the mass to 0
+      shape: new CANNON.Plane(),
+    })
+    groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0) // make it face up
+    this.pworld.addBody(groundBody)
 
     //Camera
     const fov = 60;
@@ -142,44 +157,40 @@ export default class World extends Entity {
     this.manager.onLoad = () => this.onLoad()
     this.load();
 
-    // Physics
-    this.pworld = new CANNON.World({
-      gravity: new CANNON.Vec3(0, -9.82, 0),
-    })
-    // Create a static plane for the ground
-    const groundBody = new CANNON.Body({
-      type: CANNON.Body.STATIC, // can also be achieved by setting the mass to 0
-      shape: new CANNON.Plane(),
-    })
-    groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0) // make it face up
-    this.pworld.addBody(groundBody)
-
     for (const entity of this.entities) {
       entity.awake()
     }
   }
 
   update(deltaTime) {
+    //Debug
+    // this.debugBall.position.copy(this.debugBody.position);
+    //
+
     for (const entity of this.entities) {
       entity.update(deltaTime)
     }
     this.stats.update();
-    this.pworld.fixedStep(deltaTime);
+    
+    this.pworld.fixedStep();
+
     this.threejs.render(this.scene, this.camera);
     
     //experimental
-    const pos = this.controls.getComponent(Transform).position
-    if(this.planeActiveGrid) {
-      this.celPos = this.grid.getCellPosition([pos.x, pos.z])
-      this.planeActiveGrid.position.set(this.celPos[0], pos.y + 5, this.celPos[1])
-    }
+    // const pos = this.controls.getComponent(Transform).position
+    // if(this.planeActiveGrid) {
+    //   this.celPos = this.grid.getCellPosition([pos.x, pos.z])
+    //   this.planeActiveGrid.position.set(this.celPos[0], pos.y + 5, this.celPos[1])
+    // }
   }
 
   load() {
     this.loadingBar.visible = true
     this.LoadAnimatedModel();
-    this.LoadDecorativeObjects()
-    this.LoadZombies()
+    // this.LoadDecorativeObjects();
+    // this.LoadZombies();
+    this.LoadBall();
+    // this.debugPhysics();
   }
   
   onLoad() {
@@ -198,10 +209,45 @@ export default class World extends Entity {
       scene: this.scene,
       loadingBar: this.loadingBar,
       manager: this.manager,
-      grid: this.grid
+      grid: this.grid,
+      pworld: this.pworld,
     };
     this.controls = new BasicCharacterController(params);
     this.entities.push(this.controls)
+  }
+
+  LoadBall() {
+    const params = {
+      camera: this.camera,
+      light: this.light,
+      scene: this.scene,
+      loadingBar: this.loadingBar,
+      manager: this.manager,
+      grid: this.grid,
+      pworld: this.pworld,
+    };
+    this.entities.push(new Ball(params));
+  }
+
+  debugPhysics() {
+    // Real Body
+    const ballRadius = 2;
+    const ballGeometry = new THREE.SphereGeometry(ballRadius, 16, 16);
+    const ball = new THREE.Mesh(ballGeometry, new THREE.MeshLambertMaterial({color: 0xff0000}));
+    ball.position.set(0, 10, 0);
+    console.log(ball.geometry.getAttribute('radius'));
+    this.debugBall = ball;
+    this.scene.add(ball);
+
+
+    // Physic body
+    const radius = 1 // m
+    this.debugBody = new CANNON.Body({
+      mass: 5, // kg
+      shape: new CANNON.Sphere(radius),
+    })
+    this.debugBody.position.set(0, 10, 0) // m
+    this.pworld.addBody(this.debugBody)
   }
 
   
