@@ -5,7 +5,7 @@ import { ObjectEntity } from "../../entities/ObjectEntity";
 import { SpatialGridController } from "../../game/world/components/SpatialHashGridController";
 import { BasicCharacterControllerProxy, ZombieFSM } from "../CharacterAnimation/FiniteStateMachine";
 import { AttackController } from "../components/attackController";
-import { Collider } from "../components/collider";
+import { OLDCollider } from "../components/OLDcollider";
 import { Loader } from "../components/loader";
 import { Movement } from "../components/movement-component";
 import { Stats } from "../components/stats";
@@ -32,7 +32,7 @@ export class Zombie extends ObjectEntity {
     this.addComponent(new ZombieInput)
     this.addComponent(new SpatialGridController({grid: this.params.grid}))
     this.addComponent(new Stats(80, 20))
-    this.addComponent(new Collider(3))
+    // this.addComponent(new Collider(3))
     this.addComponent(new AttackController())
     this.addComponent(new ZombieFSM(new BasicCharacterControllerProxy(this.animations)))
     super.awake()

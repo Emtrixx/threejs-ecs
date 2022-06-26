@@ -1,4 +1,4 @@
-import { Collider } from "../../character/components/collider";
+import { OLDCollider } from "../../character/components/OLDcollider";
 import { Loader } from "../../character/components/loader";
 import { Transform } from "../../components/transform";
 import { ObjectEntity } from "../../entities/ObjectEntity";
@@ -19,7 +19,7 @@ export class DecorativeObject extends ObjectEntity{
     
     awake() {
         this.addComponent(new SpatialGridController({grid: this.params.grid}))
-        this.addComponent(new Collider(2))
+        // this.addComponent(new Collider(2))
         super.awake()
     }
 

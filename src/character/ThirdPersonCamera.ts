@@ -49,7 +49,4 @@ export class ThirdPersonCamera implements IComponent {
         idealLookat.add(this.Entity.target.scene.position);
         return idealLookat;
     }
-
-
-
 }

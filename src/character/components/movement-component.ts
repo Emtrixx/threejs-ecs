@@ -1,10 +1,10 @@
 import * as THREE from "three";
+import * as CANNON from "cannon-es";
 import { Transform } from "../../components/transform";
 import { ObjectEntity } from "../../entities/ObjectEntity";
 import IComponent from "../../utils/ecs/IComponent";
 import FiniteStateMachine from "../CharacterAnimation/FiniteStateMachine";
-import { Collider } from "./collider";
-
+import { Collider } from "../../components/collider";
 export class Movement implements IComponent {
   Entity: ObjectEntity;
   private transform: Transform;
@@ -19,11 +19,13 @@ export class Movement implements IComponent {
   backward: boolean;
   left: boolean;
   right: boolean;
+  physics: boolean;
 
-  constructor(decelleration, acceleration, velocity) {
+  constructor(decelleration, acceleration, velocity, physics: boolean = false) {
     this.decceleration = decelleration;
     this.acceleration = acceleration;
     this.velocity = velocity;
+    this.physics = physics;
   }
   
   awake(): void {
@@ -37,18 +39,15 @@ export class Movement implements IComponent {
   }
 
   update(deltaTime: number): void {
+    if (this.physics) {
+      this.physicsMovement(deltaTime);
+    } else {
+      this.nonPhysicsMovement(deltaTime);
+    }
+  }
+  
+  physicsMovement(deltaTime: number) {
     const acc = this.acceleration.clone();
-
-    // Old Collision Handling
-    // if (this.collider && this.collider.collision) {
-    //   this.velocity.multiplyScalar(-1)
-    //   acc.multiplyScalar(0)
-    // }
-
-    // if (this.collider && this.collider.collision) {
-    //   this.forward = !this.forward
-    //   this.backward = !this.backward
-    // }
 
     const velocity = this.velocity;
     const frameDecceleration = new THREE.Vector3(
@@ -56,6 +55,7 @@ export class Movement implements IComponent {
       velocity.y * this.decceleration.y,
       velocity.z * this.decceleration.z
     );
+
     frameDecceleration.multiplyScalar(deltaTime);
     frameDecceleration.z =
       Math.sign(frameDecceleration.z) *
@@ -68,8 +68,7 @@ export class Movement implements IComponent {
     const Q = new THREE.Quaternion();
     const A = new THREE.Vector3();
     const R = controlObject.scene.quaternion.clone();
-
-
+    
     if (this.run) {
       acc.multiplyScalar(3.0);
     }
@@ -77,27 +76,14 @@ export class Movement implements IComponent {
     if (this.stateMachine && this.stateMachine.currentState && this.stateMachine.currentState.name == 'attack') {
       acc.multiplyScalar(0.2);
     }
-
+    
     if (this.forward) {
       velocity.z += acc.z * deltaTime;
     }
     if (this.backward) {
       velocity.z -= acc.z * deltaTime;
     }
-
-    // Another way of handling collision
-    // if(this.forward && collision) {
-    //   velocity.z -= acc.z * deltaTime
-    // } else if (this.forward) {
-    //   velocity.z += acc.z * deltaTime;
-    // }
-
-    // if(this.backward && collision) {
-    //   velocity.z += acc.z * deltaTime
-    // } else if (this.backward) {
-    //   velocity.z -= acc.z * deltaTime;
-    // }
-
+    
     if (this.left) {
       A.set(0, 1, 0);
       Q.setFromAxisAngle(A, 2.0 * Math.PI * deltaTime * this.acceleration.y);
@@ -111,6 +97,70 @@ export class Movement implements IComponent {
 
     controlObject.scene.quaternion.copy(R);
 
+    const forward = new THREE.Vector3(0, 0, 1);
+    forward.applyQuaternion(controlObject.scene.quaternion);
+    forward.normalize();
+
+    const sideways = new THREE.Vector3(1, 0, 0);
+    sideways.applyQuaternion(controlObject.scene.quaternion);
+    sideways.normalize();
+
+    sideways.multiplyScalar(velocity.x * deltaTime);
+    forward.multiplyScalar(velocity.z * deltaTime);
+
+    this.collider.body.velocity = new CANNON.Vec3(sideways.x, this.collider.body.velocity.y, forward.z);
+  }
+  
+  nonPhysicsMovement(deltaTime: number) {
+    const acc = this.acceleration.clone();
+
+    const velocity = this.velocity;
+    const frameDecceleration = new THREE.Vector3(
+      velocity.x * this.decceleration.x,
+      velocity.y * this.decceleration.y,
+      velocity.z * this.decceleration.z
+    );
+
+    frameDecceleration.multiplyScalar(deltaTime);
+    frameDecceleration.z =
+      Math.sign(frameDecceleration.z) *
+      Math.min(Math.abs(frameDecceleration.z), Math.abs(velocity.z));
+
+    velocity.add(frameDecceleration);
+
+    const controlObject = this.Entity.target;
+
+    const Q = new THREE.Quaternion();
+    const A = new THREE.Vector3();
+    const R = controlObject.scene.quaternion.clone();
+    
+    if (this.run) {
+      acc.multiplyScalar(3.0);
+    }
+
+    if (this.stateMachine && this.stateMachine.currentState && this.stateMachine.currentState.name == 'attack') {
+      acc.multiplyScalar(0.2);
+    }
+    
+    if (this.forward) {
+      velocity.z += acc.z * deltaTime;
+    }
+    if (this.backward) {
+      velocity.z -= acc.z * deltaTime;
+    }
+    
+    if (this.left) {
+      A.set(0, 1, 0);
+      Q.setFromAxisAngle(A, 2.0 * Math.PI * deltaTime * this.acceleration.y);
+      R.multiply(Q);
+    }
+    if (this.right) {
+      A.set(0, 1, 0);
+      Q.setFromAxisAngle(A, 2.0 * -Math.PI * deltaTime * this.acceleration.y);
+      R.multiply(Q);
+    }
+
+    controlObject.scene.quaternion.copy(R);
 
     const forward = new THREE.Vector3(0, 0, 1);
     forward.applyQuaternion(controlObject.scene.quaternion);
@@ -128,10 +178,9 @@ export class Movement implements IComponent {
     newPosition.add(forward)
     newPosition.add(sideways)
 
-    if(this.collider && !this.collider.isColliding(newPosition)) {
-      this.transform.position.add(forward);
-      this.transform.position.add(sideways);
-    }
+    // if(this.collider && !this.collider.) {
+    this.transform.position.add(forward);
+    this.transform.position.add(sideways);
+    // } 
   }
-
 }

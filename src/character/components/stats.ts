@@ -4,7 +4,7 @@ import IComponent from "../../utils/ecs/IComponent";
 import FiniteStateMachine from "../CharacterAnimation/FiniteStateMachine";
 import BasicCharacterControllerInput from "../CharacterController/BasicCharacterControllerInput";
 import { ZombieInput } from "../Zombie/ZombieInput";
-import { Collider } from "./collider";
+import { OLDCollider } from "./OLDcollider";
 import { Input } from "./input";
 import { Movement } from "./movement-component";
 

@@ -115,6 +115,9 @@ export default class World extends Entity {
     // this.scene.background = texture;
     this.scene.background = new THREE.Color(0x303050);
 
+    //Fog
+    this.scene.fog = new THREE.Fog(0x000000, 0, 400)
+
     //Geometry
     const plane = new THREE.Mesh(
       new THREE.PlaneGeometry(1000, 1000, 10, 10),
@@ -143,6 +146,13 @@ export default class World extends Entity {
     this.pworld = new CANNON.World({
       gravity: new CANNON.Vec3(0, -9.82, 0),
     })
+    // Create a static plane for the ground
+    const groundBody = new CANNON.Body({
+      type: CANNON.Body.STATIC, // can also be achieved by setting the mass to 0
+      shape: new CANNON.Plane(),
+    })
+    groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0) // make it face up
+    this.pworld.addBody(groundBody)
 
     for (const entity of this.entities) {
       entity.awake()
@@ -154,7 +164,7 @@ export default class World extends Entity {
       entity.update(deltaTime)
     }
     this.stats.update();
-    this.pworld.fixedStep();
+    this.pworld.fixedStep(deltaTime);
     this.threejs.render(this.scene, this.camera);
     
     //experimental

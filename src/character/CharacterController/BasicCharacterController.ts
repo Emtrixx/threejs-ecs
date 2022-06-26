@@ -7,7 +7,7 @@ import { ObjectEntity } from "../../entities/ObjectEntity";
 import { Loader } from "../components/loader";
 import { Vector3 } from "three";
 import { SpatialGridController } from "../../game/world/components/SpatialHashGridController";
-import { Collider } from "../components/collider";
+import { OLDCollider } from "../components/OLDcollider";
 import { AttackController } from "../components/attackController";
 import { Stats } from "../components/stats";
 import { ThirdPersonCamera } from "../ThirdPersonCamera";
@@ -41,7 +41,7 @@ export default class BasicCharacterController extends ObjectEntity {
       console.log(this.params.scene);
       this.addComponent(new LightController(this.params.light));
       this.addComponent(new CharacterFSM(new BasicCharacterControllerProxy(this.animations)))
-      this.addComponent(new Collider(3))
+      // this.addComponent(new Collider(3))
       super.awake()
     }
     
