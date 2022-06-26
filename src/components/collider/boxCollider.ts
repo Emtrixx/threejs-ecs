@@ -21,20 +21,23 @@ export class BoxCollider extends Collider {
         if(!dimension) {
             // Get bounding Box from mesh
             const boundingBox = new THREE.Box3().setFromObject(this.Entity.target.scene)
+            console.log(this.Entity.target.scene)
             const boundingBoxSize = new THREE.Vector3();
             boundingBox.getSize(boundingBoxSize);
         
             // Create body with specified mass
             dimension = new CANNON.Vec3(boundingBoxSize.x / 2, boundingBoxSize.y / 2, boundingBoxSize.z / 2);
+            console.log(dimension);
         }
-        console.log(dimension);
         this.body.addShape(new CANNON.Box(dimension), this.offset);
-        this.body.velocity.set(100, 100, 100);
     
         // Copy initial transformation from mesh to body
         this.body.position.copy(this.Entity.target.scene.position);
         this.body.quaternion.copy(this.Entity.target.scene.quaternion);
-        this.body.fixedRotation = true;
+        // this.body.fixedRotation = true;
+
+        //DEBUG
+        //window.cannonHelper.addVisual(this.body);
     
         this.pworld.addBody(this.body);
     }

@@ -25,15 +25,13 @@ export class Transform implements IComponent {
             return
         }
         this.Entity.target.scene.position.set(this.position.x, this.position.y, this.position.z)
-        this.Entity.target.scene.quaternion.copy(0, 0, 0, 1);
+        // this.Entity.target.scene.quaternion.copy(0, 0, 0, 1);
     }
 
     activatePhysics() {
         this.collider = this.Entity.getComponent(Collider);
-        console.log(this.Entity.target.scene.rotation)
-        console.log(this.collider.body.quaternion)
-
-
+        // console.log(this.Entity.target.scene.rotation)
+        // console.log(this.collider.body.quaternion)
         this.physics = true;
     }
     
@@ -46,8 +44,8 @@ export class Transform implements IComponent {
             const quaternion = this.collider.body.quaternion;
             // Currently only controlled here with physics otherwise in movement component
             // this.Entity.target.scene.quaternion.copy(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
-            this.rotation = this.Entity.target.scene.rotation;
         } 
+        this.rotation = this.Entity.target.scene.rotation;
         this.Entity.target.scene.position.set(this.position.x, this.position.y, this.position.z)
     }
 }

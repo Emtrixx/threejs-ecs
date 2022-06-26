@@ -33,7 +33,7 @@ export default class BasicCharacterController extends ObjectEntity {
       const p = './models/character/'
       this.addComponent(new Loader(p+'player.glb', [p+'idle.glb', p+'walk.glb', p+'run.glb', p+'attack.glb', p+'death.glb']))
       this.addComponent(new BasicCharacterControllerInput());
-      this.addComponent(new BoxCollider(this.params.pworld, 3, new CANNON.Vec3(0,-1,0)));
+      this.addComponent(new BoxCollider(this.params.pworld, 3, new CANNON.Vec3(0,3.51,0), new CANNON.Vec3(1.2,3.2,1.2)));
       this.addComponent(new Movement(decceleration, acceleration, velocity))
       this.addComponent(new SpatialGridController({grid: this.params.grid}))
       this.addComponent(new Stats(100, 40))

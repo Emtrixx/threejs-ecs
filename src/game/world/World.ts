@@ -12,6 +12,7 @@ import { decorativeObjectFilepaths } from "../../settings/DecorativeFilepaths";
 import { Transform } from "../../components/transform";
 import * as CANNON from 'cannon-es';
 import Ball from "../other/Ball";
+import { CannonHelper } from "../../utils/CannonHelper";
 
 export default class World extends Entity {
   public entities: Entity[] = [];
@@ -25,11 +26,11 @@ export default class World extends Entity {
   manager: THREE.LoadingManager;
   private grid: SpatialHashGrid;
   private decorativeModelsFilepaths: Array<string>;
+  light: THREE.DirectionalLight;
+  private pworld: CANNON.World;
   //experimental
   planeActiveGrid: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshStandardMaterial>;
   private celPos: number[];
-  light: THREE.DirectionalLight;
-  private pworld: CANNON.World;
   debugBody: CANNON.Body;
   debugBall: THREE.Mesh;
 
@@ -149,6 +150,9 @@ export default class World extends Entity {
     this.grid = new SpatialHashGrid(
       [[-1000, -1000], [1000, 1000]], [100, 100]);
 
+    // Canon Helper
+    //window.cannonHelper = new CannonHelper(this.scene, this.pworld);
+
     //Loading Models
     this.decorativeModelsFilepaths = decorativeObjectFilepaths()
     this.loadingBar = new LoadingBar()
@@ -157,6 +161,7 @@ export default class World extends Entity {
     this.manager.onLoad = () => this.onLoad()
     this.load();
 
+
     for (const entity of this.entities) {
       entity.awake()
     }
@@ -164,7 +169,8 @@ export default class World extends Entity {
 
   update(deltaTime) {
     //Debug
-    // this.debugBall.position.copy(this.debugBody.position);
+    //  this.debugBall.position.copy(this.debugBody.position);
+     //window.cannonHelper.update();
     //
 
     for (const entity of this.entities) {
@@ -187,8 +193,8 @@ export default class World extends Entity {
   load() {
     this.loadingBar.visible = true
     this.LoadAnimatedModel();
-    // this.LoadDecorativeObjects();
-    // this.LoadZombies();
+    this.LoadDecorativeObjects();
+    this.LoadZombies();
     this.LoadBall();
     // this.debugPhysics();
   }
@@ -234,7 +240,7 @@ export default class World extends Entity {
     const ballRadius = 2;
     const ballGeometry = new THREE.SphereGeometry(ballRadius, 16, 16);
     const ball = new THREE.Mesh(ballGeometry, new THREE.MeshLambertMaterial({color: 0xff0000}));
-    ball.position.set(0, 10, 0);
+    ball.position.set(0, 40, 0);
     console.log(ball.geometry.getAttribute('radius'));
     this.debugBall = ball;
     this.scene.add(ball);
@@ -244,10 +250,13 @@ export default class World extends Entity {
     const radius = 1 // m
     this.debugBody = new CANNON.Body({
       mass: 5, // kg
-      shape: new CANNON.Sphere(radius),
+      shape: new CANNON.Sphere(radius + 2),
     })
-    this.debugBody.position.set(0, 10, 0) // m
+    this.debugBody.position.set(0, 40, 0) // m
     this.pworld.addBody(this.debugBody)
+
+    //Cannon Helper
+    //window.cannonHelper.addVisual(this.debugBody);
   }
 
   
@@ -258,7 +267,8 @@ export default class World extends Entity {
       loadingBar: this.loadingBar,
       player: this.controls,
       manager: this.manager,
-      grid: this.grid
+      grid: this.grid,
+      pworld: this.pworld,
     };
     for(let i = 0; i<8; i++) {
       const zombie = new Zombie(params);

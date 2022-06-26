@@ -24,7 +24,7 @@ export default class Ball extends ObjectEntity {
       this.params = params;
       this.addMesh();
 
-      this.addComponent(new Transform(new THREE.Vector3(0, 10, 0)));
+      this.addComponent(new Transform(new THREE.Vector3(0, 20, 0)));
       this.addComponent(new SphereCollider(params.pworld, 2));
       //this.addComponent(new SpatialGridController({grid: this.params.grid}))
     }
@@ -37,6 +37,8 @@ export default class Ball extends ObjectEntity {
         const object = { scene: null };
         object.scene = ball;
         this.target = object;
+        console.log('Ball awake')
+
 
         // const directionalVectorDC = new THREE.Vector3(0, 0, 1);
         // const velocityVectorWC = directionalVectorDC.unproject(this.params.camera).sub(this.params.camera.position);
@@ -46,6 +48,7 @@ export default class Ball extends ObjectEntity {
     
     awake() {
       super.awake()
+      
     }
     
     update(deltaTime) {
@@ -58,6 +61,6 @@ export default class Ball extends ObjectEntity {
     
     onLoad() {
         this.params.scene.add(this.target.scene);
-        // this.getComponent(Transform).activatePhysics();
+        this.getComponent(Transform).activatePhysics();
     }
   }

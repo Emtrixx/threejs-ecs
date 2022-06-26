@@ -122,6 +122,7 @@ export class Movement implements IComponent {
     sideways.add(forward);
 
     this.collider.body.velocity.copy(new CANNON.Vec3(sideways.x, 0, sideways.z));
+    this.collider.body.position.y = 0;
   }
   
   nonPhysicsMovement(deltaTime: number) {
