@@ -10,6 +10,7 @@ import { SpatialHashGrid } from "../../utils/SpatialHashGrid";
 import { DecorativeObject } from "./DecorativeObject";
 import { decorativeObjectFilepaths } from "../../settings/DecorativeFilepaths";
 import { Transform } from "../../components/transform";
+import * as CANNON from 'cannon-es';
 
 export default class World extends Entity {
   public entities: Entity[] = [];
@@ -27,6 +28,7 @@ export default class World extends Entity {
   planeActiveGrid: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshStandardMaterial>;
   private celPos: number[];
   light: THREE.DirectionalLight;
+  private pworld: CANNON.World;
 
   awake() {
     //Renderer
@@ -85,9 +87,9 @@ export default class World extends Entity {
     this.scene.add(ambientLight);
 
     //Controls
-    const controls = new OrbitControls(this.camera, this.threejs.domElement);
-    controls.target.set(0, 20, 0);
-    controls.update();
+    // const controls = new OrbitControls(this.camera, this.threejs.domElement);
+    // controls.target.set(0, 20, 0);
+    // controls.update();
 
     this.stats = Stats();
     document.body.appendChild(this.stats.domElement);
@@ -137,6 +139,11 @@ export default class World extends Entity {
     this.manager.onLoad = () => this.onLoad()
     this.load();
 
+    // Physics
+    this.pworld = new CANNON.World({
+      gravity: new CANNON.Vec3(0, -9.82, 0),
+    })
+
     for (const entity of this.entities) {
       entity.awake()
     }
@@ -147,6 +154,7 @@ export default class World extends Entity {
       entity.update(deltaTime)
     }
     this.stats.update();
+    this.pworld.fixedStep();
     this.threejs.render(this.scene, this.camera);
     
     //experimental
