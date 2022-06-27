@@ -42,7 +42,8 @@ export class BoxCollider extends Collider {
         // this.body.fixedRotation = true;
 
         //DEBUG
-        window.cannonHelper.addVisual(this.body);
+        // @ts-ignore: cannon helper
+        //window.cannonHelper.addVisual(this.body);
     
         this.pworld.addBody(this.body);
     }
@@ -51,7 +52,8 @@ export class BoxCollider extends Collider {
         super.remove();
         this.body.removeShape(this.body.shapes[0]);
         this.body.angularDamping = 1;
-        window.cannonHelper.removeVisual(this.body);
+        // @ts-ignore: cannon helper
+        //window.cannonHelper.removeVisual(this.body);
     }
 
     update(_): void {}

@@ -14,6 +14,7 @@ import * as CANNON from 'cannon-es';
 import Ball from "../other/Ball";
 import { CannonHelper } from "../../utils/CannonHelper";
 import { TGALoader } from "three/examples/jsm/loaders/TGALoader";
+import { Robot } from "../../character/Robot/Robot";
 
 export default class World extends Entity {
   public entities: Entity[] = [];
@@ -66,7 +67,7 @@ export default class World extends Entity {
     this.pworld = new CANNON.World({
       gravity: new CANNON.Vec3(0, -9.82, 0),
     })
-      // Create a static plane for the ground
+    // Create a static plane for the ground
     const groundBody = new CANNON.Body({
       type: CANNON.Body.STATIC, // can also be achieved by setting the mass to 0
       shape: new CANNON.Plane(),
@@ -137,7 +138,8 @@ export default class World extends Entity {
       [[-1000, -1000], [1000, 1000]], [100, 100]);
 
     // Canon Helper
-    window.cannonHelper = new CannonHelper(this.scene, this.pworld);
+    // @ts-ignore: cannon helper
+    //window.cannonHelper = new CannonHelper(this.scene, this.pworld);
 
     //Loading Models
     this.decorativeModelsFilepaths = decorativeObjectFilepaths()
@@ -156,21 +158,22 @@ export default class World extends Entity {
   update(deltaTime) {
     //Debug
     //  this.debugBall.position.copy(this.debugBody.position);
-     window.cannonHelper.update();
+    // @ts-ignore: cannon helper
+    //window.cannonHelper.update();
     //
 
     for (const entity of this.entities) {
       entity.update(deltaTime)
     }
     this.stats.update();
-    
+
     this.pworld.fixedStep();
 
     this.threejs.render(this.scene, this.camera);
-    
+
     //experimental
     const pos = this.controls.getComponent(Transform).position
-    if(this.planeActiveGrid) {
+    if (this.planeActiveGrid) {
       this.celPos = this.grid.getCellPosition([pos.x, pos.z])
       this.planeActiveGrid.position.set(this.celPos[0], pos.y + 5, this.celPos[1])
     }
@@ -183,9 +186,10 @@ export default class World extends Entity {
     this.LoadAmbientSound();
     this.LoadZombies();
     this.LoadBall();
+    this.loadRobot();
     // this.debugPhysics();
   }
-  
+
   onLoad() {
     console.log('done');
     this.loadingBar.visible = false;
@@ -226,7 +230,7 @@ export default class World extends Entity {
     // Real Body
     const ballRadius = 2;
     const ballGeometry = new THREE.SphereGeometry(ballRadius, 16, 16);
-    const ball = new THREE.Mesh(ballGeometry, new THREE.MeshLambertMaterial({color: 0xff0000}));
+    const ball = new THREE.Mesh(ballGeometry, new THREE.MeshLambertMaterial({ color: 0xff0000 }));
     ball.position.set(0, 40, 0);
     console.log(ball.geometry.getAttribute('radius'));
     this.debugBall = ball;
@@ -243,23 +247,24 @@ export default class World extends Entity {
     this.pworld.addBody(this.debugBody)
 
     //Cannon Helper
-    window.cannonHelper.addVisual(this.debugBody);
+    // @ts-ignore: cannon helper
+    //window.cannonHelper.addVisual(this.debugBody);
   }
 
   LoadAmbientSound() {
     // create an AudioListener and add it to the camera
     this.listener = new THREE.AudioListener();
-    this.camera.add( this.listener );
+    this.camera.add(this.listener);
 
     // create a global audio source
-    const sound = new THREE.Audio( this.listener );
+    const sound = new THREE.Audio(this.listener);
 
     // load a sound and set it as the Audio object's buffer
     const audioLoader = new THREE.AudioLoader();
-    audioLoader.load( 'sounds/ambientForest.wav', function( buffer ) {
-      sound.setBuffer( buffer );
-      sound.setLoop( true );
-      sound.setVolume( 0.5 );
+    audioLoader.load('sounds/ambientForest.wav', function (buffer) {
+      sound.setBuffer(buffer);
+      sound.setLoop(true);
+      sound.setVolume(0.5);
       sound.play();
     });
   }
@@ -275,86 +280,133 @@ export default class World extends Entity {
       pworld: this.pworld,
       listener: this.listener,
     };
-    for(let i = 0; i<8; i++) {
+    for (let i = 0; i < 8; i++) {
       const zombie = new Zombie(params);
       this.entities.push(zombie)
-      
+
     }
   }
-  
+
   LoadDecorativeObjects() {
     const params = {
-        camera: this.camera,
-        scene: this.scene,
-        loadingBar: this.loadingBar,
-        manager: this.manager,
-        grid: this.grid,
-        pworld: this.pworld,
-      };
-      const list = this.decorativeModelsFilepaths;
-      for(let i = 0; i <  list.length; i++) {
-        const fp = './models/decorativeObjects/'+list[i] +'.obj'
-        const mp = './models/decorativeObjects/'+list[i] +'.mtl'
-        const model = new DecorativeObject(params, fp, mp);
-        this.entities.push(model)
-      }
-    }
-
-    loadSkybox() {
-      //Skybox
-      // const pathArr = [
-      //   "./images/galaxy/galaxy+Z.tga",
-      //   "./images/galaxy/galaxy-Z.tga",
-      //   "./images/galaxy/galaxy+Y.tga",
-      //   "./images/galaxy/galaxy-Y.tga",
-      //   "./images/galaxy/galaxy+X.tga",
-      //   "./images/galaxy/galaxy-X.tga",
-      // ]
-      // this.skyboxArr = [];
-      // const tgaLoader = new TGALoader(this.manager);
-      // pathArr.forEach(path => {
-      //   tgaLoader.load(path, (texture)=> {
-      //     this.skyboxArr.push(texture);
-      //   })
-      // })
-      const loader = new THREE.CubeTextureLoader();
-      const texture = loader.load([
-        './images/space/weltraum.png',
-        './images/space/weltraumh.png',
-        './images/space/weltraumo.png',
-        './images/space/weltraumu.png',
-        './images/space/weltrauml.png',
-        './images/space/weltraumr.png',
-      ]);
-      this.scene.background = texture;
-    }
-    
-    OnWindowResize() {
-      // Update sizes
-      this.camera.aspect = window.innerWidth / window.innerHeight;
-      this.camera.updateProjectionMatrix();
-      this.threejs.setSize(window.innerWidth, window.innerHeight);
-    }
-    
-
-    //experimental
-    //shows a white plane for the current grid cell of the player
-    showActiveGrid() {
-      const pos = this.controls.getComponent(Transform).position
-      new THREE.PlaneGeometry(10,10,2,2)
-      this.planeActiveGrid = new THREE.Mesh(
-        new THREE.PlaneGeometry(20, 20, 10, 10),
-        new THREE.MeshStandardMaterial({
-          color: 0xffffff,
-          transparent: true,
-          opacity: 0.3
-        })
-      );
-      this.celPos = this.grid.getCellPosition([pos.x, pos.z])
-      this.planeActiveGrid.position.set(this.celPos[0], pos.y + 5, this.celPos[1])
-      this.planeActiveGrid.castShadow = false;
-      this.planeActiveGrid.rotation.x = -Math.PI / 2;
-      this.scene.add(this.planeActiveGrid)
+      camera: this.camera,
+      scene: this.scene,
+      loadingBar: this.loadingBar,
+      manager: this.manager,
+      grid: this.grid,
+      pworld: this.pworld,
+    };
+    const list = this.decorativeModelsFilepaths;
+    for (let i = 0; i < list.length; i++) {
+      const fp = './models/decorativeObjects/' + list[i] + '.obj'
+      const mp = './models/decorativeObjects/' + list[i] + '.mtl'
+      const model = new DecorativeObject(params, fp, mp);
+      this.entities.push(model)
     }
   }
-  
+
+  loadSkybox() {
+    //Skybox
+    // const pathArr = [
+    //   "./images/galaxy/galaxy+Z.tga",
+    //   "./images/galaxy/galaxy-Z.tga",
+    //   "./images/galaxy/galaxy+Y.tga",
+    //   "./images/galaxy/galaxy-Y.tga",
+    //   "./images/galaxy/galaxy+X.tga",
+    //   "./images/galaxy/galaxy-X.tga",
+    // ]
+    // this.skyboxArr = [];
+    // const tgaLoader = new TGALoader(this.manager);
+    // pathArr.forEach(path => {
+    //   tgaLoader.load(path, (texture)=> {
+    //     this.skyboxArr.push(texture);
+    //   })
+    // })
+    const loader = new THREE.CubeTextureLoader();
+    const texture = loader.load([
+      './images/space/weltraum.png',
+      './images/space/weltraumh.png',
+      './images/space/weltraumo.png',
+      './images/space/weltraumu.png',
+      './images/space/weltrauml.png',
+      './images/space/weltraumr.png',
+    ]);
+    this.scene.background = texture;
+  }
+
+  // loadPiano() {
+  //   //params new piano
+  //   const params = {
+  //     camera: this.camera,
+  //     scene: this.scene,
+  //     loadingBar: this.loadingBar,
+  //     manager: this.manager,
+  //     grid: this.grid,
+  //     pworld: this.pworld,
+  //     listener: this.listener,
+  //   };
+  //   const piano = new Piano(params);
+  //   this.entities.push(piano)
+  // }
+
+  loadRobot() {
+    // const params = {
+    //   camera: this.camera,
+    //   scene: this.scene,
+    //   loadingBar: this.loadingBar,
+    //   manager: this.manager,
+    //   grid: this.grid,
+    //   pworld: this.pworld,
+    //   listener: this.listener,
+    // };
+    // const robot = new Robot(params);
+    // this.entities.push(robot)
+    const vertices = new Float32Array([
+      0.230335,0.042676, -0.267800, 
+      0.019082,0.267800, -0.267800, 
+      0.230335,0.042676, 0.267800, 
+      0.019082,0.267800, 0.267800, 
+      0.230335,-0.267800, -0.267800, 
+      0.019082,-0.267800, -0.267800, 
+      0.230335,-0.267800, 0.267800, 
+      0.019082,-0.267800, 0.267800, 
+    ])
+    const footGeometry = new THREE.BufferGeometry();
+    footGeometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+    // footGeometry.setIndex(indices);
+    footGeometry.computeVertexNormals();
+    footGeometry.translate(0, 1, 0);
+    const foot = new THREE.Mesh(footGeometry, new THREE.MeshPhongMaterial({ color: 0xffffff }));
+    foot.scale.multiplyScalar(2);
+    foot.castShadow = true;
+    this.scene.add(foot);
+  }
+
+  OnWindowResize() {
+    // Update sizes
+    this.camera.aspect = window.innerWidth / window.innerHeight;
+    this.camera.updateProjectionMatrix();
+    this.threejs.setSize(window.innerWidth, window.innerHeight);
+  }
+
+
+  //experimental
+  //shows a white plane for the current grid cell of the player
+  showActiveGrid() {
+    const pos = this.controls.getComponent(Transform).position
+    new THREE.PlaneGeometry(10, 10, 2, 2)
+    this.planeActiveGrid = new THREE.Mesh(
+      new THREE.PlaneGeometry(20, 20, 10, 10),
+      new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.3
+      })
+    );
+    this.celPos = this.grid.getCellPosition([pos.x, pos.z])
+    this.planeActiveGrid.position.set(this.celPos[0], pos.y + 5, this.celPos[1])
+    this.planeActiveGrid.castShadow = false;
+    this.planeActiveGrid.rotation.x = -Math.PI / 2;
+    this.scene.add(this.planeActiveGrid)
+  }
+}

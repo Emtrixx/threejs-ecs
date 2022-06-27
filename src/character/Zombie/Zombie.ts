@@ -12,7 +12,7 @@ import { Movement } from "../components/movement-component";
 import { Stats } from "../components/stats";
 import { ZombieInput } from "./ZombieInput";
 import { BoxCollider } from "../../components/collider/boxCollider";
-import { SoundSource } from "../components/attackSound";
+import { SoundSource } from "../components/soundSource";
 
 export class Zombie extends ObjectEntity {
   name: string;
