@@ -4,9 +4,9 @@ import { SpatialGridController } from "../../game/world/components/SpatialHashGr
 import IComponent from "../../utils/ecs/IComponent";
 import { IObserver, ISubscriber } from "../../utils/events";
 import FiniteStateMachine from "../CharacterAnimation/FiniteStateMachine";
-import { AttackController } from "../components/attackController";
-import { Input } from "../components/input";
-import { Movement } from "../components/movement-component";
+import { AttackController } from "./attackController";
+import { Input } from "./input";
+import { Movement } from "./movement-component";
 
 export class SoundSource implements IComponent, ISubscriber {
     Entity: ObjectEntity;
