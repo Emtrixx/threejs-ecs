@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import * as CANNON from 'cannon-es';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import BasicCharacterController from "../../character/CharacterController/BasicCharacterController";
 import * as dat from "dat.gui";
@@ -10,9 +11,7 @@ import { SpatialHashGrid } from "../../utils/SpatialHashGrid";
 import { DecorativeObject } from "./DecorativeObject";
 import { decorativeObjectFilepaths } from "../../settings/DecorativeFilepaths";
 import { Transform } from "../../components/transform";
-import * as CANNON from 'cannon-es';
 import Ball from "../other/Ball";
-import { CannonHelper } from "../../utils/CannonHelper";
 import { TGALoader } from "three/examples/jsm/loaders/TGALoader";
 import { Robot } from "../../character/Robot/Robot";
 
@@ -172,11 +171,11 @@ export default class World extends Entity {
     this.threejs.render(this.scene, this.camera);
 
     //experimental
-    const pos = this.controls.getComponent(Transform).position
-    if (this.planeActiveGrid) {
-      this.celPos = this.grid.getCellPosition([pos.x, pos.z])
-      this.planeActiveGrid.position.set(this.celPos[0], pos.y + 5, this.celPos[1])
-    }
+    // const pos = this.controls.getComponent(Transform).position
+    // if (this.planeActiveGrid) {
+    //   this.celPos = this.grid.getCellPosition([pos.x, pos.z])
+    //   this.planeActiveGrid.position.set(this.celPos[0], pos.y + 5, this.celPos[1])
+    // }
   }
 
   load() {
@@ -186,7 +185,7 @@ export default class World extends Entity {
     this.LoadAmbientSound();
     this.LoadZombies();
     this.LoadBall();
-    this.loadRobot();
+    // this.loadRobot();
     // this.debugPhysics();
   }
 
@@ -196,7 +195,7 @@ export default class World extends Entity {
     for (const entity of this.entities) {
       entity.onLoad()
     }
-    this.showActiveGrid()
+    // this.showActiveGrid()
   }
 
   LoadAnimatedModel() {
