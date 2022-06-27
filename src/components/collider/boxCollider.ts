@@ -8,13 +8,16 @@ import { Collider } from "./collider";
 
 export class BoxCollider extends Collider {
     dimension: CANNON.Vec3;
+    transform: Transform;
 
     constructor(pworld: CANNON.World ,mass: number, offset: CANNON.Vec3 = new CANNON.Vec3(0, 0, 0), dimension: CANNON.Vec3 = null) {    
         super(pworld, mass, offset);
         this.dimension = dimension;
     }
     
-    awake(): void {}
+    awake(): void {
+        this.transform = this.Entity.getComponent(Transform);
+    }
     
     onLoad() {
         let dimension = this.dimension;
@@ -32,8 +35,10 @@ export class BoxCollider extends Collider {
         this.body.addShape(new CANNON.Box(dimension), this.offset);
     
         // Copy initial transformation from mesh to body
-        this.body.position.copy(this.Entity.target.scene.position);
+        const position = this.transform.position;
+        this.body.position.copy(new CANNON.Vec3(position.x, position.y, position.z));
         this.body.quaternion.copy(this.Entity.target.scene.quaternion);
+        // this.body.quaternion.copy(this.transform.quaternion);
         // this.body.fixedRotation = true;
 
         //DEBUG

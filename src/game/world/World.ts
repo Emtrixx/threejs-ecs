@@ -13,6 +13,7 @@ import { Transform } from "../../components/transform";
 import * as CANNON from 'cannon-es';
 import Ball from "../other/Ball";
 import { CannonHelper } from "../../utils/CannonHelper";
+import { TGALoader } from "three/examples/jsm/loaders/TGALoader";
 
 export default class World extends Entity {
   public entities: Entity[] = [];
@@ -33,6 +34,7 @@ export default class World extends Entity {
   private celPos: number[];
   debugBody: CANNON.Body;
   debugBall: THREE.Mesh;
+  skyboxArr: any[];
 
   awake() {
     //Renderer
@@ -110,14 +112,7 @@ export default class World extends Entity {
     this.stats = Stats();
     document.body.appendChild(this.stats.domElement);
 
-    //Skybox
-    // const tgaLoader = new TGALoader();
-    // const ft = tgaLoader.load("./images/skybox/skyboxMap/interstellar_ft.tga")
-    // const bk = tgaLoader.load("./images/skybox/skyboxMap/interstellar_bk.tga")
-    // const up = tgaLoader.load("./images/skybox/skyboxMap/interstellar_up.tga")
-    // const dn = tgaLoader.load("./images/skybox/skyboxMap/interstellar_dn.tga")
-    // const rt = tgaLoader.load("./images/skybox/skyboxMap/interstellar_rt.tga")
-    // const lt = tgaLoader.load("./images/skybox/skyboxMap/interstellar_lt.tga")
+    
 
     // const loader = new THREE.CubeTextureLoader();
     // const texture = loader.load([
@@ -128,11 +123,12 @@ export default class World extends Entity {
     //   "./images/Meadow/negx.jpg",
     //   "./images/Meadow/posx.jpg",
     // ]);
-    // this.scene.background = texture;
-    this.scene.background = new THREE.Color(0x303050);
+    // this.scene.background = cubeMap;
+    // this.scene.background = new THREE.Color(0x303050);
+    this.loadSkybox();
 
     //Fog
-    this.scene.fog = new THREE.Fog(0x000000, 0, 400)
+    // this.scene.fog = new THREE.Fog(0x000000, 0, 400)
 
     //Geometry
     const plane = new THREE.Mesh(
@@ -183,11 +179,11 @@ export default class World extends Entity {
     this.threejs.render(this.scene, this.camera);
     
     //experimental
-    // const pos = this.controls.getComponent(Transform).position
-    // if(this.planeActiveGrid) {
-    //   this.celPos = this.grid.getCellPosition([pos.x, pos.z])
-    //   this.planeActiveGrid.position.set(this.celPos[0], pos.y + 5, this.celPos[1])
-    // }
+    const pos = this.controls.getComponent(Transform).position
+    if(this.planeActiveGrid) {
+      this.celPos = this.grid.getCellPosition([pos.x, pos.z])
+      this.planeActiveGrid.position.set(this.celPos[0], pos.y + 5, this.celPos[1])
+    }
   }
 
   load() {
@@ -283,7 +279,8 @@ export default class World extends Entity {
         scene: this.scene,
         loadingBar: this.loadingBar,
         manager: this.manager,
-        grid: this.grid
+        grid: this.grid,
+        pworld: this.pworld,
       };
       const list = this.decorativeModelsFilepaths;
       for(let i = 0; i <  list.length; i++) {
@@ -293,7 +290,35 @@ export default class World extends Entity {
         this.entities.push(model)
       }
     }
-    
+
+    loadSkybox() {
+      //Skybox
+      // const pathArr = [
+      //   "./images/galaxy/galaxy+Z.tga",
+      //   "./images/galaxy/galaxy-Z.tga",
+      //   "./images/galaxy/galaxy+Y.tga",
+      //   "./images/galaxy/galaxy-Y.tga",
+      //   "./images/galaxy/galaxy+X.tga",
+      //   "./images/galaxy/galaxy-X.tga",
+      // ]
+      // this.skyboxArr = [];
+      // const tgaLoader = new TGALoader(this.manager);
+      // pathArr.forEach(path => {
+      //   tgaLoader.load(path, (texture)=> {
+      //     this.skyboxArr.push(texture);
+      //   })
+      // })
+      const loader = new THREE.CubeTextureLoader();
+      const texture = loader.load([
+        './images/space/weltraum.png',
+        './images/space/weltraumh.png',
+        './images/space/weltraumo.png',
+        './images/space/weltraumu.png',
+        './images/space/weltrauml.png',
+        './images/space/weltraumr.png',
+      ]);
+      this.scene.background = texture;
+    }
     
     OnWindowResize() {
       // Update sizes
