@@ -37,7 +37,6 @@ export default abstract class Entity implements IAwake, IUpdate, IonLoad {
   }
 
   public getComponent<C extends IComponent>(constr: { new(...args: any[]): C }): C {
-    // --- ADD --- //
     for (const component of this.components) {
       if (component instanceof constr) {
         return component as C;
@@ -46,7 +45,6 @@ export default abstract class Entity implements IAwake, IUpdate, IonLoad {
     throw new Error(
       `Component ${constr.name} not found on Entity ${this.constructor.name}`
     );
-    // --- ADD --- //
   }
 
   public hasComponent<C extends IComponent>(constr: { new(...args: any[]): C }): boolean {

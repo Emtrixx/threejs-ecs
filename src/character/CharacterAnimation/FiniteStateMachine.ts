@@ -1,5 +1,6 @@
 import Entity from "../../utils/ecs/Entity";
 import IComponent from "../../utils/ecs/IComponent";
+import { IObserver, ISubscriber } from "../../utils/events";
 import { AttackController } from "../components/attackController";
 import { Movement } from "../components/movement-component";
 import { Stats } from "../components/stats";
@@ -10,7 +11,7 @@ import { RunState } from "./states/RunState";
 import { State } from "./states/State";
 import { WalkState } from "./states/WalkState";
 
-export default class FiniteStateMachine implements IComponent {
+export default class FiniteStateMachine implements IComponent, IObserver {
   Entity: Entity;
   states: object = {};
   currentState: State | null;
@@ -18,29 +19,43 @@ export default class FiniteStateMachine implements IComponent {
   //wird in loader gesetzt
   mixer: THREE.AnimationMixer
   attack: AttackController;
+  subscriber: Set<ISubscriber>;
 
   constructor() {
     this.states = {};
     this.currentState = null;
+    this.subscriber = new Set();
   }
-
+  
   awake(): void {
     this.movement = this.Entity.getComponent(Movement)
     this.attack = this.Entity.getComponent(AttackController)
   }
-
+  
   update(deltaTime: number): void {
     if (this.currentState) {
-        this.currentState.update(deltaTime);
-        //mixer update
-        this.mixer.update(deltaTime)
-      }
+      this.currentState.update(deltaTime);
+      //mixer update
+      this.mixer.update(deltaTime)
+    }
+  }
+  
+  subscribe(subscriber: ISubscriber): void {
+    this.subscriber.add(subscriber);
+  }
+  
+  unsubscribe(subscriber: ISubscriber): void {
+    this.subscriber.delete(subscriber);
+  }
+
+  send(message: string): void {
+    this.subscriber.forEach(subscriber => subscriber.notify(message));
   }
 
   AddState(name, type) {
     this.states[name] = type;
   }
-
+  
   SetState(name) {
     const prevState = this.currentState;
 
@@ -55,6 +70,7 @@ export default class FiniteStateMachine implements IComponent {
 
     this.currentState = state;
     state.enter(prevState);
+    this.send(name);
   }
 }
 
