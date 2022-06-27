@@ -54,7 +54,8 @@ export class AttackController implements IComponent {
             
             
             const dot = forward.dot(dirToTarget);
-            if (math.in_range(dot, 0.8, 1.2)) {
+            console.log(dot);
+            if (math.in_range(dot, 0.7, 1)) {
                 target.getComponent(Stats).receiveDamage(damage)
             }
 

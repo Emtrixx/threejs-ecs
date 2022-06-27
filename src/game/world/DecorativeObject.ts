@@ -1,8 +1,10 @@
-import { Collider } from "../../character/components/collider";
+import * as CANNON from "cannon-es";
+import { OLDCollider } from "../../character/components/OLDcollider";
 import { Loader } from "../../character/components/loader";
 import { Transform } from "../../components/transform";
 import { ObjectEntity } from "../../entities/ObjectEntity";
 import { SpatialGridController } from "./components/SpatialHashGridController";
+import { BoxCollider } from "../../components/collider/boxCollider";
 
 export class DecorativeObject extends ObjectEntity{
     private filepath: string;
@@ -15,11 +17,11 @@ export class DecorativeObject extends ObjectEntity{
         this.materialFilepath = materialFilepath
         this.addComponent(new Transform())
         this.addComponent(new Loader(this.filepath, [], this.materialFilepath))
+        this.addComponent(new BoxCollider(this.params.pworld, 0, new CANNON.Vec3(0,2,0), new CANNON.Vec3(1,4,1)))
     }
     
     awake() {
         this.addComponent(new SpatialGridController({grid: this.params.grid}))
-        this.addComponent(new Collider(2))
         super.awake()
     }
 
@@ -38,6 +40,7 @@ export class DecorativeObject extends ObjectEntity{
         )
         this.target.scene.scale.set(10,10,10)
         this.params.scene.add(this.target.scene);
+        this.getComponent(BoxCollider).onLoad();
     }
 
     // spawnpoint(): Vector3 {
