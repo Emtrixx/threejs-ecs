@@ -47,5 +47,11 @@ export class BoxCollider extends Collider {
         this.pworld.addBody(this.body);
     }
 
+    remove(): void {
+        super.remove();
+        this.body.removeShape(this.body.shapes[0]);
+        //window.cannonHelper.removeVisual(this.body);
+    }
+
     update(_): void {}
 }

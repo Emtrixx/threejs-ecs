@@ -3,8 +3,9 @@ import * as THREE from "three";
 import * as CANNON from "cannon-es";
 import IComponent from "../../utils/ecs/IComponent";
 import { Transform } from "../transform";
+import { IonLoad } from "../../utils/lifecycle/Ilifecylce";
 
-export class Collider implements IComponent {
+export class Collider implements IComponent, IonLoad {
     Entity: ObjectEntity;
     mass: number;
     offset: CANNON.Vec3;
@@ -27,4 +28,10 @@ export class Collider implements IComponent {
     }
     
     update(_): void {}
+
+    remove() {
+        this.pworld.removeBody(this.body);
+    }
+
+    onLoad() {}
 }

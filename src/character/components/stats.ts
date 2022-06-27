@@ -1,4 +1,5 @@
 import { SpatialGridController } from "../../game/world/components/SpatialHashGridController";
+import * as CANNON from "cannon-es";
 import Entity from "../../utils/ecs/Entity";
 import IComponent from "../../utils/ecs/IComponent";
 import FiniteStateMachine from "../CharacterAnimation/FiniteStateMachine";
@@ -7,6 +8,8 @@ import { ZombieInput } from "../Zombie/ZombieInput";
 import { OLDCollider } from "./OLDcollider";
 import { Input } from "./input";
 import { Movement } from "./movement-component";
+import { Collider } from "../../components/collider/collider";
+import { BoxCollider } from "../../components/collider/boxCollider";
 
 export class Stats implements IComponent {
     Entity: Entity;
@@ -31,7 +34,12 @@ export class Stats implements IComponent {
         if(this.health == 0) {
             console.log('Dead')
             this.Entity.getComponent(SpatialGridController).removeFromGrid()
+            const collider = this.Entity.getComponent(BoxCollider)
+            collider.remove();
+            collider.dimension = new CANNON.Vec3(2,1,2);
+            collider.onLoad();
             this.Entity.removeComponent(SpatialGridController)
+
             this.Entity.removeComponent(Movement)
             this.Entity.removeComponent(ZombieInput)
             this.Entity.removeComponent(BasicCharacterControllerInput)
