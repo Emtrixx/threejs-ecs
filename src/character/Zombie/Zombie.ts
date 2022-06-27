@@ -12,6 +12,7 @@ import { Movement } from "../components/movement-component";
 import { Stats } from "../components/stats";
 import { ZombieInput } from "./ZombieInput";
 import { BoxCollider } from "../../components/collider/boxCollider";
+import { SoundSource } from "../components/attackSound";
 
 export class Zombie extends ObjectEntity {
   name: string;
@@ -34,10 +35,10 @@ export class Zombie extends ObjectEntity {
     this.addComponent(new ZombieInput)
     this.addComponent(new SpatialGridController({grid: this.params.grid}))
     this.addComponent(new Stats(80, 20))
-    // this.addComponent(new Collider(3))
     this.addComponent(new BoxCollider(this.params.pworld, 3, new CANNON.Vec3(0,3.51,0), new CANNON.Vec3(1.2,3.2,1.2)));
     this.addComponent(new AttackController())
     this.addComponent(new ZombieFSM(new BasicCharacterControllerProxy(this.animations)))
+    this.addComponent(new SoundSource('./sounds/zombie/attack.mp3', this.params.listener, 'attack'));
     super.awake()
   }
 

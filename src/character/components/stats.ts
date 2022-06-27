@@ -36,7 +36,8 @@ export class Stats implements IComponent {
             this.Entity.getComponent(SpatialGridController).removeFromGrid()
             const collider = this.Entity.getComponent(BoxCollider)
             collider.remove();
-            collider.dimension = new CANNON.Vec3(2,1,2);
+            collider.dimension = new CANNON.Vec3(2,0.5,2);
+            collider.offset = new CANNON.Vec3(0,0,0);
             collider.onLoad();
             this.Entity.removeComponent(SpatialGridController)
 

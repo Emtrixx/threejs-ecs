@@ -49,6 +49,7 @@ export class Movement implements IComponent {
   activatePhysics() {
     this.physics = true;
     this.collider = this.Entity.getComponent(Collider);
+    this.collider.body.fixedRotation = true;
     this.transform.activatePhysics();
   }
   
@@ -122,6 +123,85 @@ export class Movement implements IComponent {
     sideways.add(forward);
 
     this.collider.body.velocity.copy(new CANNON.Vec3(sideways.x, 0, sideways.z));
+    this.collider.body.position.y = 0;
+  }
+
+  physicsMovement2(deltaTime: number) {
+
+    const acc = new CANNON.Vec3(this.acceleration.x, this.acceleration.y, this.acceleration.z);
+
+    const velocity = this.velocity;
+
+    
+    // TODO replace with cannon friction on floor
+    const frameDecceleration = new THREE.Vector3(
+      velocity.x * this.decceleration.x,
+      velocity.y * this.decceleration.y,
+      velocity.z * this.decceleration.z
+    );
+
+    frameDecceleration.multiplyScalar(deltaTime);
+    frameDecceleration.z =
+      Math.sign(frameDecceleration.z) *
+      Math.min(Math.abs(frameDecceleration.z), Math.abs(velocity.z));
+
+    // velocity.add(frameDecceleration);
+    // end TODO
+    
+    // const quaternion = new THREE.Quaternion();
+    const Q = new CANNON.Quaternion(0,0,0,1);
+    const A = new CANNON.Vec3(0,1,0);
+    const R = this.collider.body.quaternion.clone();
+
+    // from input
+    if (this.run) {
+      acc.scale(3);
+    }
+
+    if (this.stateMachine && this.stateMachine.currentState && this.stateMachine.currentState.name == 'attack') {
+      acc.scale(0.2);
+    }
+    
+    if (this.forward) {
+      velocity.z += acc.z * deltaTime;
+    }
+    if (this.backward) {
+      velocity.z -= acc.z * deltaTime;
+    }
+    
+    if (this.left) {
+      A.set(0, 1, 0);
+      Q.setFromAxisAngle(A, 2.0 * Math.PI * deltaTime * this.acceleration.y);
+      R.mult(Q);
+    }
+    if (this.right) {
+      A.set(0, 1, 0);
+      Q.setFromAxisAngle(A, 2.0 * Math.PI * deltaTime * this.acceleration.y);
+      R.mult(Q);
+    }
+    // Lock rotation on the x and z axis WRONG
+    // R.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), 0);
+    // R.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), 0);
+
+    const forward = new THREE.Vector3(0, 0, 1);
+    // forward.applyQuaternion(new THREE.Quaternion(R.x, R.y, R.z, R.w));
+    forward.normalize();
+
+    const sideways = new THREE.Vector3(1, 0, 0);
+    // sideways.applyQuaternion(new THREE.Quaternion(R.x, R.y, R.z, R.w));
+    sideways.normalize();
+
+    sideways.multiplyScalar(velocity.x * deltaTime * 14);
+    forward.multiplyScalar(velocity.z * deltaTime * 14);
+    //bad naming, sideways is actually the velocity
+    sideways.add(forward);
+    
+    // velocity.multiplyScalar(10)
+
+    // this.collider.body.velocity.copy(new CANNON.Vec3(sideways.x, 0, sideways.z));
+    this.collider.body.quaternion.copy(R);
+    this.collider.body.velocity.x = sideways.x;
+    this.collider.body.velocity.z = sideways.z;
     this.collider.body.position.y = 0;
   }
   

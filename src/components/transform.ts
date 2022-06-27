@@ -41,11 +41,11 @@ export class Transform implements IComponent {
             const position = this.collider.body.position;
             this.position.set(position.x, position.y, position.z);
             //Rotation
-            const quaternion = this.collider.body.quaternion;
             // Currently only controlled here with physics otherwise in movement component
-            // this.Entity.target.scene.quaternion.copy(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+            const quaternion = this.collider.body.quaternion;
+            // this.Entity.target.scene.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
         } 
-        this.rotation = this.Entity.target.scene.rotation;
+        // this.rotation = this.Entity.target.scene.rotation;
         this.Entity.target.scene.position.set(this.position.x, this.position.y, this.position.z)
     }
 }

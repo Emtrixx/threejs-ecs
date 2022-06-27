@@ -35,6 +35,7 @@ export default class World extends Entity {
   debugBody: CANNON.Body;
   debugBall: THREE.Mesh;
   skyboxArr: any[];
+  listener: THREE.AudioListener;
 
   awake() {
     //Renderer
@@ -112,18 +113,7 @@ export default class World extends Entity {
     this.stats = Stats();
     document.body.appendChild(this.stats.domElement);
 
-    
-
-    // const loader = new THREE.CubeTextureLoader();
-    // const texture = loader.load([
-    //   "../images/Meadow/posz.jpg",
-    //   "./images/Meadow/negz.jpg",
-    //   "./images/Meadow/posy.jpg",
-    //   "./images/Meadow/negy.jpg",
-    //   "./images/Meadow/negx.jpg",
-    //   "./images/Meadow/posx.jpg",
-    // ]);
-    // this.scene.background = cubeMap;
+    // Skybox
     // this.scene.background = new THREE.Color(0x303050);
     this.loadSkybox();
 
@@ -147,7 +137,7 @@ export default class World extends Entity {
       [[-1000, -1000], [1000, 1000]], [100, 100]);
 
     // Canon Helper
-    //window.cannonHelper = new CannonHelper(this.scene, this.pworld);
+    window.cannonHelper = new CannonHelper(this.scene, this.pworld);
 
     //Loading Models
     this.decorativeModelsFilepaths = decorativeObjectFilepaths()
@@ -166,7 +156,7 @@ export default class World extends Entity {
   update(deltaTime) {
     //Debug
     //  this.debugBall.position.copy(this.debugBody.position);
-     //window.cannonHelper.update();
+     window.cannonHelper.update();
     //
 
     for (const entity of this.entities) {
@@ -190,6 +180,7 @@ export default class World extends Entity {
     this.loadingBar.visible = true
     this.LoadAnimatedModel();
     this.LoadDecorativeObjects();
+    this.LoadAmbientSound();
     this.LoadZombies();
     this.LoadBall();
     // this.debugPhysics();
@@ -252,10 +243,27 @@ export default class World extends Entity {
     this.pworld.addBody(this.debugBody)
 
     //Cannon Helper
-    //window.cannonHelper.addVisual(this.debugBody);
+    window.cannonHelper.addVisual(this.debugBody);
   }
 
-  
+  LoadAmbientSound() {
+    // create an AudioListener and add it to the camera
+    this.listener = new THREE.AudioListener();
+    this.camera.add( this.listener );
+
+    // create a global audio source
+    const sound = new THREE.Audio( this.listener );
+
+    // load a sound and set it as the Audio object's buffer
+    const audioLoader = new THREE.AudioLoader();
+    audioLoader.load( 'sounds/ambientForest.wav', function( buffer ) {
+      sound.setBuffer( buffer );
+      sound.setLoop( true );
+      sound.setVolume( 0.5 );
+      sound.play();
+    });
+  }
+
   LoadZombies() {
     const params = {
       camera: this.camera,
@@ -265,6 +273,7 @@ export default class World extends Entity {
       manager: this.manager,
       grid: this.grid,
       pworld: this.pworld,
+      listener: this.listener,
     };
     for(let i = 0; i<8; i++) {
       const zombie = new Zombie(params);
