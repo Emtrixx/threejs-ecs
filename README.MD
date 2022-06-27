@@ -9,10 +9,9 @@ For a local environment pull the repo and run
 ```
 npm install 
 ```
-before starting the first time or if dependencies change.
 
 Afterwards run
 ```
 npm run dev
 ```
-to start dev environment, by default the back-end will be reachable under localhost:3000.
+to start dev environment, by default the site be reachable under localhost:3000.
