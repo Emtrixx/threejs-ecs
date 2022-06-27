@@ -58,7 +58,7 @@ export default class BasicCharacterController extends ObjectEntity {
     onLoad() {
       this.target.scene.scale.set(4,4,4)
       this.params.scene.add(this.target.scene);
-      console.log(this.target.scene);
+      // console.log(this.target.scene);
       // add physics
       this.getComponent(BoxCollider).onLoad();
       this.getComponent(Movement).activatePhysics();
